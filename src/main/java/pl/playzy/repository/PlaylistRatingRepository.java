@@ -9,6 +9,11 @@ import java.util.Optional;
 
 public interface PlaylistRatingRepository extends JpaRepository<PlaylistRating, Long> {
     Optional<PlaylistRating> findByUserAndPlaylist(User user, Playlist playlist);
+
     long countByPlaylistAndIsLikeTrue(Playlist playlist);
+
     long countByPlaylistAndIsLikeFalse(Playlist playlist);
+
+    boolean existsByUserAndPlaylist(User user, Playlist playlist);
+
 }
