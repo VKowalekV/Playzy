@@ -8,15 +8,16 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "playlist_tracks")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = "playlist")
-@ToString(exclude = "playlist")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PlaylistTrack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NotBlank

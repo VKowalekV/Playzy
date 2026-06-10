@@ -11,15 +11,16 @@ import java.util.HashSet;
 
 @Entity
 @Table(name = "playlists")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"owner", "tracks", "coCreators", "followers", "ratings"})
-@ToString(exclude = {"owner", "tracks", "coCreators", "followers", "ratings"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NotBlank
@@ -33,25 +34,25 @@ public class Playlist {
     private boolean isPublic;
 
     public int getLikesCount() {
-        if (ratings == null) return 0;
+        if (ratings == null)
+            return 0;
         return (int) ratings.stream().filter(PlaylistRating::isLike).count();
     }
 
     public int getDislikesCount() {
-        if (ratings == null) return 0;
+        if (ratings == null)
+            return 0;
         return (int) ratings.stream().filter(r -> !r.isLike()).count();
     }
 
-    @ManyToMany
-    @JoinTable(
-            name = "playlist_followers",
-            joinColumns = @JoinColumn(name = "playlist_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "playlist_followers", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @Builder.Default
     private Set<User> followers = new HashSet<>();
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaylistRating> ratings;
+    @Builder.Default
+    private List<PlaylistRating> ratings = new java.util.ArrayList<>();
 
     @NotNull
     private LocalDateTime createdAt;
@@ -61,13 +62,11 @@ public class Playlist {
     private User owner;
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaylistTrack> tracks;
+    @Builder.Default
+    private List<PlaylistTrack> tracks = new java.util.ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "playlist_co_creators",
-            joinColumns = @JoinColumn(name = "playlist_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> coCreators;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "playlist_co_creators", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @Builder.Default
+    private Set<User> coCreators = new HashSet<>();
 }

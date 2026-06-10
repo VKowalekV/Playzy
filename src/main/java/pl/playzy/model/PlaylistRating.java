@@ -2,20 +2,22 @@ package pl.playzy.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 @Entity
 @Table(name = "playlist_ratings", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id", "playlist_id"})
+        @UniqueConstraint(columnNames = { "user_id", "playlist_id" })
 })
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"user", "playlist"})
-@ToString(exclude = {"user", "playlist"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PlaylistRating {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
