@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Playzy - Mój Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <a th:href="@{/}" class="logo">Playzy</a>
+        <div class="nav-links">
+            <span style="color: var(--text-secondary); margin-right: 1rem;">Witaj, <strong sec:authentication="name"></strong></span>
+            <form th:action="@{/logout}" method="post" style="display:inline; margin:0;">
+                <button type="submit" class="nav-btn primary" style="width: auto; padding: 0.6rem 1.2rem; font-size: inherit; margin:0;">Wyloguj się</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="dashboard-card">
+        <h2>Panel Użytkownika</h2>
+        
+        <div class="user-info" th:if="${currentUser != null}">
+            <p><strong>Nazwa użytkownika:</strong> <span th:text="${currentUser.username}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${currentUser.email}"></span></p>
+            <p><strong>Data dołączenia:</strong> <span th:text="${#temporals.format(currentUser.joinDate, 'dd-MM-yyyy HH:mm')}"></span></p>
+        </div>
+    </div>
+</body>
+</html>

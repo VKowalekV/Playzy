@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rejestracja - Playzy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Załóż konto</h1>
+
+    <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+    
+    <div th:if="${#fields.hasErrors('${user.*}')}" class="alert alert-error">
+        Popraw błędy w formularzu.
+    </div>
+
+    <form th:action="@{/register}" th:object="${user}" method="post">
+        
+        <div class="form-group">
+            <label for="username">Nazwa użytkownika:</label>
+            <input type="text" id="username" th:field="*{username}" required autofocus>
+            <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Adres E-mail:</label>
+            <input type="email" id="email" th:field="*{email}" required>
+            <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Hasło:</label>
+            <input type="password" id="password" name="password" th:value="*{password}" required>
+            <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Powtórz hasło:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" th:value="*{confirmPassword}" required>
+            <span class="error" th:if="${#fields.hasErrors('passwordsEqual')}" th:errors="*{passwordsEqual}"></span>
+        </div>
+
+        <button type="submit">Zarejestruj się</button>
+    </form>
+
+    <div class="links">
+        <p>Masz już konto? <a th:href="@{/login}">Zaloguj się</a></p>
+        <p><a th:href="@{/}">Wróć na stronę główną</a></p>
+    </div>
+</div>
+</body>
+</html>
