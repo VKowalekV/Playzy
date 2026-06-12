@@ -16,6 +16,7 @@
             </th:block>
             <th:block sec:authorize="isAuthenticated()">
                 <a th:href="@{/library}" class="nav-btn">Biblioteka</a>
+                <a th:href="@{/dashboard}" class="nav-btn">Mój Panel</a>
                 <form th:action="@{/logout}" method="post">
                     <button type="submit" class="nav-btn primary">Wyloguj</button>
                 </form>
