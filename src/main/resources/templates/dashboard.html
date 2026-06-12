@@ -9,9 +9,11 @@
     <nav class="navbar">
         <a th:href="@{/}" class="logo">Playzy</a>
         <div class="nav-links">
-            <span style="color: var(--text-secondary); margin-right: 1rem;">Witaj, <strong sec:authentication="name"></strong></span>
-            <form th:action="@{/logout}" method="post" style="display:inline; margin:0;">
-                <button type="submit" class="nav-btn primary" style="width: auto; padding: 0.6rem 1.2rem; font-size: inherit; margin:0;">Wyloguj się</button>
+            <a th:href="@{/playlists}" class="nav-btn">Publiczne Playlisty</a>
+            <a th:href="@{/library}" class="nav-btn">Biblioteka</a>
+            <span class="user-greeting">Witaj, <strong sec:authentication="name"></strong></span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="nav-btn primary">Wyloguj</button>
             </form>
         </div>
     </nav>

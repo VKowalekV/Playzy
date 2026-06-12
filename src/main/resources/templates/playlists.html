@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Playzy - Odkrywaj i Twórz Playlisty</title>
+    <title>Publiczne Playlisty - Playzy</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
     <nav class="navbar">
         <a th:href="@{/}" class="logo">Playzy</a>
         <div class="nav-links">
-            <a th:href="@{/playlists}" class="nav-btn">Publiczne Playlisty</a>
+            <a th:href="@{/playlists}" class="nav-btn active-link">Publiczne Playlisty</a>
             <th:block sec:authorize="isAnonymous()">
                 <a th:href="@{/login}" class="nav-btn">Zaloguj się</a>
                 <a th:href="@{/register}" class="nav-btn primary">Dołącz za darmo</a>
@@ -23,16 +23,9 @@
         </div>
     </nav>
 
-    <main class="hero">
-        <h1>Poczuj Rytm z Playzy</h1>
-        <p>Najlepsze miejsce do tworzenia, udostępniania i odkrywania publicznych playlist. Zbierz swoje ulubione utwory w jednym miejscu i podziel się nimi ze światem.</p>
-        
-        <div sec:authorize="isAnonymous()" class="hero-actions">
-            <a th:href="@{/register}"><button>Zacznij Tworzyć</button></a>
-        </div>
-        <div sec:authorize="isAuthenticated()" class="hero-actions">
-            <a th:href="@{/dashboard}"><button>Przejdź do panelu</button></a>
-        </div>
-    </main>
+    <div class="container page-container">
+        <h2>Publiczne Playlisty</h2>
+        <p class="empty-state">Brak publicznych playlist do wyświetlenia.</p>
+    </div>
 </body>
 </html>

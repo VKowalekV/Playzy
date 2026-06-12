@@ -71,7 +71,6 @@ body {
 
 .nav-btn.primary {
     background-color: var(--accent-primary);
-    box-shadow: 0 4px 15px var(--accent-glow);
 }
 
 .nav-btn.primary:hover {
@@ -108,7 +107,7 @@ body {
 
 .container {
     background-color: var(--card-bg);
-    padding: 2.5rem;
+    padding: 1.5rem 2.5rem;
     border-radius: 16px;
     box-shadow: 0 10px 40px #00000066;
     width: 100%;
@@ -119,7 +118,7 @@ body {
 
 .dashboard-card {
     background-color: var(--card-bg);
-    padding: 2.5rem;
+    padding: 1.5rem 2.5rem;
     border-radius: 16px;
     box-shadow: 0 10px 40px #00000066;
     border: 1px solid var(--border-color);
@@ -195,7 +194,6 @@ button {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 15px var(--accent-glow);
 }
 
 button:hover {
@@ -246,4 +244,187 @@ form {
 .links a:hover {
     color: #a78bfa;
     text-decoration: underline;
+}
+
+.tabs-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: none;
+    width: auto;
+}
+
+.tab-btn:hover {
+    background: transparent;
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    color: var(--accent-primary);
+    border-bottom: 2px solid var(--accent-primary);
+    border-radius: 0;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #00000099;
+    opacity: 0;
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px #000000aa;
+    position: relative;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+}
+
+.close-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: var(--accent-primary);
+}
+
+.nav-links form {
+    display: inline;
+    margin: 0;
+}
+
+.nav-links form button {
+    width: auto;
+    padding: 0.6rem 1.2rem;
+    font-size: inherit;
+    margin: 0;
+}
+
+.nav-links .active-link {
+    color: var(--accent-primary);
+}
+
+.user-greeting {
+    color: var(--text-secondary);
+    margin-right: 1rem;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.hero-actions a {
+    text-decoration: none;
+}
+
+.hero-actions button {
+    width: auto;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+.page-container {
+    max-width: 800px;
+    margin-top: 4rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h2 {
+    margin: 0;
+}
+
+.page-header button {
+    width: auto;
+    padding: 0.6rem 1.2rem;
+    margin: 0;
+}
+
+.empty-state {
+    color: var(--text-secondary);
+    margin-top: 1rem;
+}
+
+.modal-form-title {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.modal-textarea {
+    width: 100%;
+    padding: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: inherit;
+    resize: vertical;
+    margin-top: 0.5rem;
+}
+
+.modal-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.modal-checkbox-group input[type="checkbox"] {
+    width: auto;
+}
+
+.modal-checkbox-group label {
+    margin: 0;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.modal-submit-btn {
+    margin-top: 1.5rem;
 }

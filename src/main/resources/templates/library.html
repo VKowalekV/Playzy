@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteka - Playzy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <a th:href="@{/}" class="logo">Playzy</a>
+        <div class="nav-links">
+            <a th:href="@{/playlists}" class="nav-btn">Publiczne Playlisty</a>
+            <a th:href="@{/library}" class="nav-btn active-link">Biblioteka</a>
+            <a th:href="@{/dashboard}" class="nav-btn">Mój Panel</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="nav-btn primary">Wyloguj</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container page-container">
+        <div class="page-header">
+            <h2>Twoja Biblioteka</h2>
+            <button class="nav-btn primary" onclick="openModal()">+ Nowa Playlista</button>
+        </div>
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab(event, 'my-playlists')">Moje Playlisty</button>
+            <button class="tab-btn" onclick="switchTab(event, 'followed-playlists')">Obserwowane</button>
+        </div>
+
+        <div id="my-playlists" class="tab-content" style="display: block;">
+            <p class="empty-state">Nie masz żadnej playlisty.</p>
+        </div>
+        
+        <div id="followed-playlists" class="tab-content" style="display: none;">
+            <p class="empty-state">Nie obserwujesz żadnych playlist.</p>
+        </div>
+    </div>
+
+    <div id="createPlaylistModal" class="modal" th:classappend="${showCreateModal} ? 'show' : ''">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 class="modal-form-title">Stwórz Playlistę</h3>
+            
+            <form th:action="@{/playlists/create}" th:object="${playlistCreateDto}" method="post">
+                <div class="form-group">
+                    <label for="name">Nazwa playlisty</label>
+                    <input type="text" id="name" th:field="*{name}" placeholder="Np. trapshit" required>
+                    <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Błąd nazwy</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Opis (opcjonalnie)</label>
+                    <textarea id="description" th:field="*{description}" placeholder="Krótki opis playlisty..." rows="3" class="modal-textarea"></textarea>
+                    <div class="error-msg" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Błąd opisu</div>
+                </div>
+
+                <div class="form-group modal-checkbox-group">
+                    <input type="checkbox" id="isPublic" th:field="*{public}">
+                    <label for="isPublic">Playlista publiczna (widoczna dla innych)</label>
+                </div>
+
+                <button type="submit" class="modal-submit-btn">Stwórz</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(event, tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).style.display = 'block';
+            event.currentTarget.classList.add('active');
+        }
+
+        function openModal() {
+            document.getElementById('createPlaylistModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('createPlaylistModal').classList.remove('show');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('createPlaylistModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
