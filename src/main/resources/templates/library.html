@@ -29,11 +29,55 @@
         </div>
 
         <div id="my-playlists" class="tab-content" style="display: block;">
-            <p class="empty-state">Nie masz żadnej playlisty.</p>
+            <p class="empty-state" th:if="${#lists.isEmpty(myPlaylists)}">Nie masz żadnej playlisty.</p>
+            <div class="playlists-container" th:unless="${#lists.isEmpty(myPlaylists)}">
+                <div class="playlist-card" th:each="playlist : ${myPlaylists}">
+                    <div class="playlist-img-placeholder">🎵</div>
+                    <div class="playlist-info">
+                        <div class="playlist-title-row">
+                            <span class="playlist-card-title" th:text="${playlist.name}">Tytuł</span>
+                            <span class="playlist-badge" th:text="${playlist.public ? 'Publiczna' : 'Prywatna'}">Status</span>
+                        </div>
+                        <div class="playlist-meta">
+                            <span class="playlist-card-author" th:text="'Autor: ' + ${playlist.owner.username}">Autor</span>
+                            <span th:text="${#lists.size(playlist.tracks)} + ' utworów'">0 utworów</span>
+                        </div>
+                    </div>
+                    <div class="playlist-actions">
+                        <div class="playlist-stats">
+                            <button class="btn-icon">👍 <span th:text="${playlist.likesCount}">0</span></button>
+                            <button class="btn-icon">👎 <span th:text="${playlist.dislikesCount}">0</span></button>
+                        </div>
+                        <button class="btn-delete">Usuń</button>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div id="followed-playlists" class="tab-content" style="display: none;">
-            <p class="empty-state">Nie obserwujesz żadnych playlist.</p>
+            <p class="empty-state" th:if="${#lists.isEmpty(followedPlaylists)}">Nie obserwujesz żadnych playlist.</p>
+            <div class="playlists-container" th:unless="${#lists.isEmpty(followedPlaylists)}">
+                <div class="playlist-card" th:each="playlist : ${followedPlaylists}">
+                    <div class="playlist-img-placeholder">🎵</div>
+                    <div class="playlist-info">
+                        <div class="playlist-title-row">
+                            <span class="playlist-card-title" th:text="${playlist.name}">Tytuł</span>
+                            <span class="playlist-badge" th:text="${playlist.public ? 'Publiczna' : 'Prywatna'}">Status</span>
+                        </div>
+                        <div class="playlist-meta">
+                            <span class="playlist-card-author" th:text="'Autor: ' + ${playlist.owner.username}">Autor</span>
+                            <span th:text="${#lists.size(playlist.tracks)} + ' utworów'">0 utworów</span>
+                        </div>
+                    </div>
+                    <div class="playlist-actions">
+                        <div class="playlist-stats">
+                            <button class="btn-icon">👍 <span th:text="${playlist.likesCount}">0</span></button>
+                            <button class="btn-icon">👎 <span th:text="${playlist.dislikesCount}">0</span></button>
+                        </div>
+                        <button class="btn-outline">Odobserwuj</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

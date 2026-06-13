@@ -10,4 +10,7 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
 
     List<Playlist> findByIsPublicTrueAndNameContainingIgnoreCase(String name);
 
+    List<Playlist> findByIsPublicTrueOrderByCreatedAtDesc();
+
+    List<Playlist> findByFollowersId(Long followerId);
 }

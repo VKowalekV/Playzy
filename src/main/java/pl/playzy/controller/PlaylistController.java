@@ -23,15 +23,23 @@ public class PlaylistController {
     private final UserRepository userRepository;
 
     @GetMapping("/playlists")
-    public String publicPlaylists() {
+    public String publicPlaylists(Model model) {
+        model.addAttribute("publicPlaylists", playlistService.getPublicPlaylists());
         return "playlists";
     }
 
     @GetMapping("/library")
-    public String library(Model model) {
+    public String library(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         if (!model.containsAttribute("playlistCreateDto")) {
             model.addAttribute("playlistCreateDto", new PlaylistCreateDto());
         }
+        
+        User owner = userRepository.findByUsername(userDetails.getUsername().toLowerCase())
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+
+        model.addAttribute("myPlaylists", playlistService.getUserPlaylists(owner));
+        model.addAttribute("followedPlaylists", playlistService.getFollowedPlaylists(owner));
+
         return "library";
     }
 

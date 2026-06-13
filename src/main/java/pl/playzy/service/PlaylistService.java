@@ -9,6 +9,7 @@ import pl.playzy.model.User;
 import pl.playzy.repository.PlaylistRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +28,17 @@ public class PlaylistService {
                 .build();
                 
         playlistRepository.save(playlist);
+    }
+
+    public List<Playlist> getUserPlaylists(User user) {
+        return playlistRepository.findByOwnerId(user.getId());
+    }
+
+    public List<Playlist> getFollowedPlaylists(User user) {
+        return playlistRepository.findByFollowersId(user.getId());
+    }
+
+    public List<Playlist> getPublicPlaylists() {
+        return playlistRepository.findByIsPublicTrueOrderByCreatedAtDesc();
     }
 }
