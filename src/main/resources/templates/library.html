@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Biblioteka - Playzy</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
@@ -45,10 +47,16 @@
                     </div>
                     <div class="playlist-actions">
                         <div class="playlist-stats">
-                            <button class="btn-icon">👍 <span th:text="${playlist.likesCount}">0</span></button>
-                            <button class="btn-icon">👎 <span th:text="${playlist.dislikesCount}">0</span></button>
+                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
+                                👍 <span th:id="'likes-count-' + ${playlist.id}" th:text="${playlist.likesCount}">0</span>
+                            </button>
+                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and !playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
+                                👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span>
+                            </button>
                         </div>
-                        <button class="btn-delete">Usuń</button>
+                        <form th:action="@{/playlists/{id}/delete(id=${playlist.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tę playlistę?');" style="margin: 0;">
+                            <button type="submit" class="btn-delete">Usuń</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -71,10 +79,14 @@
                     </div>
                     <div class="playlist-actions">
                         <div class="playlist-stats">
-                            <button class="btn-icon">👍 <span th:text="${playlist.likesCount}">0</span></button>
-                            <button class="btn-icon">👎 <span th:text="${playlist.dislikesCount}">0</span></button>
+                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
+                                👍 <span th:id="'likes-count-' + ${playlist.id}" th:text="${playlist.likesCount}">0</span>
+                            </button>
+                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and !playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
+                                👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span>
+                            </button>
                         </div>
-                        <button class="btn-outline">Odobserwuj</button>
+                        <button th:id="'follow-btn-' + ${playlist.id}" type="button" class="btn-outline" th:onclick="'toggleFollow(event, ' + ${playlist.id} + ')'">Odobserwuj</button>
                     </div>
                 </div>
             </div>
@@ -109,6 +121,7 @@
         </div>
     </div>
 
+    <script th:src="@{/js/playlists.js}"></script>
     <script>
         function switchTab(event, tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => {

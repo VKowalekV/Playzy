@@ -26,7 +26,7 @@ public class PlaylistService {
                 .owner(owner)
                 .createdAt(LocalDateTime.now())
                 .build();
-                
+
         playlistRepository.save(playlist);
     }
 
@@ -40,5 +40,51 @@ public class PlaylistService {
 
     public List<Playlist> getPublicPlaylists() {
         return playlistRepository.findByIsPublicTrueOrderByCreatedAtDesc();
+    }
+
+    @Transactional
+    public void deletePlaylist(Long id, User currentUser) {
+        playlistRepository.findById(id).ifPresent(playlist -> {
+            if (playlist.getOwner().getId().equals(currentUser.getId())) {
+                playlistRepository.delete(playlist);
+            }
+        });
+    }
+
+    @Transactional
+    public Playlist toggleFollow(Long id, User currentUser) {
+        return playlistRepository.findById(id).map(playlist -> {
+            if (playlist.isFollowedBy(currentUser)) {
+                playlist.getFollowers().removeIf(u -> u.getId().equals(currentUser.getId()));
+            } else {
+                playlist.getFollowers().add(currentUser);
+            }
+            return playlistRepository.save(playlist);
+        }).orElse(null);
+    }
+
+    @Transactional
+    public Playlist ratePlaylist(Long id, User currentUser, boolean isLike) {
+        return playlistRepository.findById(id).map(playlist -> {
+            Boolean currentRating = playlist.getUserRating(currentUser);
+            if (currentRating != null) {
+                if (currentRating == isLike) {
+                    playlist.getRatings().removeIf(r -> r.getUser().getId().equals(currentUser.getId()));
+                } else {
+                    playlist.getRatings().stream()
+                            .filter(r -> r.getUser().getId().equals(currentUser.getId()))
+                            .findFirst()
+                            .ifPresent(r -> r.setLike(isLike));
+                }
+            } else {
+                pl.playzy.model.PlaylistRating newRating = pl.playzy.model.PlaylistRating.builder()
+                        .user(currentUser)
+                        .playlist(playlist)
+                        .isLike(isLike)
+                        .build();
+                playlist.getRatings().add(newRating);
+            }
+            return playlistRepository.save(playlist);
+        }).orElse(null);
     }
 }

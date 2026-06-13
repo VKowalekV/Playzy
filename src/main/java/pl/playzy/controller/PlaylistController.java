@@ -33,7 +33,7 @@ public class PlaylistController {
         if (!model.containsAttribute("playlistCreateDto")) {
             model.addAttribute("playlistCreateDto", new PlaylistCreateDto());
         }
-        
+
         User owner = userRepository.findByUsername(userDetails.getUsername().toLowerCase())
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
 
@@ -59,4 +59,25 @@ public class PlaylistController {
         playlistService.createPlaylist(dto, owner);
         return "redirect:/library";
     }
+
+    @ModelAttribute("currentUser")
+    public User populateCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null) {
+            return userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
+        }
+        return null;
+    }
+
+    @PostMapping("/playlists/{id}/delete")
+    public String deletePlaylist(@org.springframework.web.bind.annotation.PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null) {
+            User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
+            if (user != null) {
+                playlistService.deletePlaylist(id, user);
+            }
+        }
+        return "redirect:/library";
+    }
+
 }
