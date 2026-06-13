@@ -56,8 +56,8 @@
                         <button class="btn-icon" onclick="window.location.href='/login'">👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span></button>
                     </div>
                     <span th:if="${#authorization.expression('isAuthenticated()') and #authentication.name == playlist.owner.username}" class="playlist-badge" style="background-color: var(--accent-primary); color: white;">Twoja playlista</span>
-                    <button th:id="'follow-btn-' + ${playlist.id}" type="button" th:if="${#authorization.expression('isAuthenticated()') and #authentication.name != playlist.owner.username}" class="btn-outline" th:text="${playlist.isFollowedBy(currentUser)} ? 'Odobserwuj' : 'Obserwuj'" th:onclick="'toggleFollow(event, ' + ${playlist.id} + ')'">Obserwuj</button>
-                    <button th:unless="${#authorization.expression('isAuthenticated()')}" class="btn-outline" onclick="window.location.href='/login'">Obserwuj</button>
+                    <button th:id="'follow-btn-' + ${playlist.id}" type="button" th:if="${#authorization.expression('isAuthenticated()') and #authentication.name != playlist.owner.username}" class="btn-outline" th:classappend="${!playlist.isFollowedBy(currentUser)} ? 'active' : ''" th:text="${playlist.isFollowedBy(currentUser)} ? 'Odobserwuj' : 'Obserwuj'" th:onclick="'toggleFollow(event, ' + ${playlist.id} + ')'">Obserwuj</button>
+                    <button th:unless="${#authorization.expression('isAuthenticated()')}" class="btn-outline active" onclick="window.location.href='/login'">Obserwuj</button>
                 </div>
             </div>
         </div>

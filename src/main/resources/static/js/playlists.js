@@ -78,6 +78,11 @@ async function toggleFollow(event, playlistId) {
             const btn = document.getElementById(`follow-btn-${playlistId}`);
             if (btn) {
                 btn.innerText = data.followed ? 'Odobserwuj' : 'Obserwuj';
+                if (!data.followed) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
 
                 if (window.location.pathname === '/library' && !data.followed) {
                     const card = btn.closest('.playlist-card');
