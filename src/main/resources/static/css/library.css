@@ -17,6 +17,7 @@
     cursor: pointer;
     box-shadow: none;
     width: auto;
+    text-decoration: none;
 }
 
 .tab-btn:hover {

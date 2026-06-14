@@ -41,11 +41,12 @@ public class DashboardController {
 
     @PostMapping("/dashboard/username")
     public String updateUsername(@Valid @ModelAttribute("usernameUpdateDto") UsernameUpdateDto dto,
-                                 BindingResult bindingResult,
-                                 @AuthenticationPrincipal UserDetails userDetails,
-                                 Model model,
-                                 RedirectAttributes redirectAttributes) {
-        User currentUser = getCurrentUser(userDetails).orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        User currentUser = getCurrentUser(userDetails)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
 
         if (bindingResult.hasErrors()) {
             addDashboardAttributes(model, currentUser);
@@ -67,11 +68,12 @@ public class DashboardController {
 
     @PostMapping("/dashboard/email")
     public String updateEmail(@Valid @ModelAttribute("emailUpdateDto") EmailUpdateDto dto,
-                              BindingResult bindingResult,
-                              @AuthenticationPrincipal UserDetails userDetails,
-                              Model model,
-                              RedirectAttributes redirectAttributes) {
-        User currentUser = getCurrentUser(userDetails).orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        User currentUser = getCurrentUser(userDetails)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
 
         if (bindingResult.hasErrors()) {
             addDashboardAttributes(model, currentUser);
@@ -92,11 +94,12 @@ public class DashboardController {
 
     @PostMapping("/dashboard/password")
     public String changePassword(@Valid @ModelAttribute("passwordChangeDto") PasswordChangeDto dto,
-                                 BindingResult bindingResult,
-                                 @AuthenticationPrincipal UserDetails userDetails,
-                                 Model model,
-                                 RedirectAttributes redirectAttributes) {
-        User currentUser = getCurrentUser(userDetails).orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        User currentUser = getCurrentUser(userDetails)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
 
         if (bindingResult.hasErrors()) {
             addDashboardAttributes(model, currentUser);
@@ -117,11 +120,12 @@ public class DashboardController {
 
     @PostMapping("/dashboard/delete-account")
     public String deleteAccount(@Valid @ModelAttribute("deleteAccountDto") DeleteAccountDto dto,
-                                BindingResult bindingResult,
-                                @AuthenticationPrincipal UserDetails userDetails,
-                                Model model,
-                                HttpServletRequest request) {
-        User currentUser = getCurrentUser(userDetails).orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            HttpServletRequest request) {
+        User currentUser = getCurrentUser(userDetails)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
 
         if (bindingResult.hasErrors()) {
             addDashboardAttributes(model, currentUser);
