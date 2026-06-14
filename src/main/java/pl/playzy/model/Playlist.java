@@ -83,4 +83,24 @@ public class Playlist {
     @JoinTable(name = "playlist_co_creators", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @Builder.Default
     private Set<User> coCreators = new HashSet<>();
+
+    public double getTotalDurationMinutes() {
+        if (tracks == null) return 0.0;
+        return tracks.stream().mapToDouble(PlaylistTrack::getDurationMinutes).sum();
+    }
+
+    public String getTotalDurationFormatted() {
+        if (tracks == null || tracks.isEmpty()) return "0 min";
+        double totalMinutes = tracks.stream().mapToDouble(PlaylistTrack::getDurationMinutes).sum();
+        long totalSeconds = Math.round(totalMinutes * 60);
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        
+        if (hours > 0) {
+            return String.format("%d godz. %d min", hours, minutes);
+        } else {
+            return String.format("%d min %d s", minutes, seconds);
+        }
+    }
 }

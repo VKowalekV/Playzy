@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Playzy - ' + ${playlist.name}">Playlista - Playzy</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/playlist-details.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <a th:href="@{/}" class="logo">Playzy</a>
+        <div class="nav-links">
+            <a th:href="@{/playlists}" class="nav-btn">Publiczne Playlisty</a>
+            <th:block sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="nav-btn">Zaloguj się</a>
+                <a th:href="@{/register}" class="nav-btn primary">Dołącz za darmo</a>
+            </th:block>
+            <th:block sec:authorize="isAuthenticated()">
+                <a th:href="@{/library}" class="nav-btn">Biblioteka</a>
+                <a th:href="@{/dashboard}" class="nav-btn">Mój Panel</a>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="nav-btn primary">Wyloguj</button>
+                </form>
+            </th:block>
+        </div>
+    </nav>
+
+    <div class="container page-container" id="playlist-page-container" th:data-playlist-id="${playlist.id}">
+        
+        <div class="playlist-details-header">
+            <div class="playlist-details-cover">
+                🎵
+            </div>
+            <div class="playlist-details-info">
+                <span class="playlist-badge playlist-details-badge" th:text="${playlist.public ? 'Publiczna' : 'Prywatna'}">Status</span>
+                <h1 class="playlist-details-title" th:text="${playlist.name}">Tytuł</h1>
+                <p class="playlist-details-desc" th:if="${playlist.description != null and !playlist.description.isEmpty()}" th:text="${playlist.description}">Opis</p>
+                <div class="playlist-details-meta">
+                    <span>Autor: </span>
+                    <span class="playlist-details-author" th:text="${playlist.owner.username}">Autor</span>
+                    <span>•</span>
+                    <span th:text="${#lists.size(playlist.followers)} + ' obserwujących'">0 obserwujących</span>
+                    <span>•</span>
+                    <span id="total-tracks" th:text="${#lists.size(playlist.tracks)} + ' utworów'">0 utworów</span>
+                    <span>•</span>
+                    <span id="total-duration" th:data-raw-duration="${playlist.getTotalDurationMinutes()}" th:text="${playlist.getTotalDurationFormatted()}">0 min</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="playlist-details-controls">
+            <button th:if="${canEdit}" class="nav-btn primary playlist-details-add-btn" onclick="openSpotifyModal()">
+                + Dodaj utwory
+            </button>
+        </div>
+
+        <div class="tracks-container">
+            <div th:if="${#lists.isEmpty(playlist.tracks)}" class="empty-state padded-empty-state">
+                Ta playlista jest jeszcze pusta.
+            </div>
+            <div th:each="track, stat : ${playlist.tracks}" class="playlist-track-wrapper" th:id="'track-row-' + ${track.id}">
+                <div class="playlist-track-content">
+                    <div class="playlist-track-index" th:text="${stat.index + 1}">1</div>
+                    <div class="playlist-track-embed-container">
+                        <iframe th:src="'https://open.spotify.com/embed/track/' + ${track.spotifyId} + '?utm_source=generator&theme=0'" class="playlist-track-iframe" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>
+                    <div th:if="${canEdit}">
+                        <form th:action="@{/playlists/{id}/tracks/{trackId}/delete(id=${playlist.id}, trackId=${track.id})}" method="post" class="playlist-track-delete-form" onsubmit="return confirm('Czy na pewno chcesz usunąć ten utwór z playlisty?');">
+                            <button type="submit" class="btn-delete">Usuń</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="spotifySearchModal" class="modal">
+        <div class="modal-content spotify-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-form-title spotify-modal-title">Wyszukaj utwór</h3>
+                <span class="close-btn" onclick="closeSpotifyModal()">&times;</span>
+            </div>
+            <div class="modal-body spotify-modal-body">
+                <input type="text" id="spotifySearchInput" class="modal-input spotify-search-input" placeholder="Wpisz tytuł lub artystę...">
+                
+                <div id="spotify-loading" class="spotify-loading">Szukam...</div>
+                
+                <div id="spotify-results" class="spotify-results-container">
+                    <div class="spotify-empty-state">Zacznij pisać, aby przeszukać bazę Spotify...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/playlist-details.js}"></script>
+</body>
+</html>

@@ -39,6 +39,7 @@ public class PlaylistTrack {
     @NotNull
     private LocalDateTime addedAt;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "playlist_id", nullable = false)
     private Playlist playlist;

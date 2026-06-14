@@ -9,8 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import pl.playzy.dto.PlaylistCreateDto;
+import pl.playzy.model.Playlist;
 import pl.playzy.model.User;
 import pl.playzy.repository.UserRepository;
 import pl.playzy.service.PlaylistService;
@@ -60,6 +62,28 @@ public class PlaylistController {
         return "redirect:/library";
     }
 
+    @GetMapping("/playlists/{id}")
+    public String playlistDetails(@PathVariable Long id, Model model,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Playlist playlist = playlistService.getPlaylistById(id)
+                .orElseThrow(() -> new RuntimeException("Playlist not found"));
+
+        model.addAttribute("playlist", playlist);
+
+        boolean canEdit = false;
+        if (userDetails != null) {
+            User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
+            if (user != null) {
+                if (playlist.getOwner().getId().equals(user.getId()) || playlist.getCoCreators().contains(user)) {
+                    canEdit = true;
+                }
+            }
+        }
+        model.addAttribute("canEdit", canEdit);
+
+        return "playlist-details";
+    }
+
     @ModelAttribute("currentUser")
     public User populateCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
@@ -69,7 +93,7 @@ public class PlaylistController {
     }
 
     @PostMapping("/playlists/{id}/delete")
-    public String deletePlaylist(@org.springframework.web.bind.annotation.PathVariable Long id,
+    public String deletePlaylist(@PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
             User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
@@ -80,4 +104,15 @@ public class PlaylistController {
         return "redirect:/library";
     }
 
+    @PostMapping("/playlists/{id}/tracks/{trackId}/delete")
+    public String deleteTrack(@PathVariable Long id, @PathVariable Long trackId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null) {
+            User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
+            if (user != null) {
+                playlistService.removeTrack(id, trackId, user);
+            }
+        }
+        return "redirect:/playlists/" + id;
+    }
 }

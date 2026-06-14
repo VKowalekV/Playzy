@@ -1,0 +1,32 @@
+.dashboard-card {
+    background-color: var(--card-bg);
+    padding: 1.5rem 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    margin: 3rem auto;
+    max-width: 600px;
+    width: 90%;
+}
+
+.dashboard-card h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.user-info {
+    background-color: var(--bg-overlay);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.user-info p {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.user-info strong {
+    color: var(--text-primary);
+}
