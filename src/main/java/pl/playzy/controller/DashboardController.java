@@ -32,8 +32,8 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         if (userDetails != null) {
-            userRepository.findByUsername(userDetails.getUsername()).ifPresent(user -> {
-                model.addAttribute("currentUser", UserProfileDto.fromEntity(user));
+            userRepository.findByUsername(userDetails.getUsername().toLowerCase()).ifPresent(user -> {
+                addDashboardAttributes(model, user);
             });
         }
         return "dashboard";
