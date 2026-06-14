@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Admina - Użytkownicy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <a th:href="@{/}" class="logo">Playzy</a>
+        <div class="nav-links">
+            <a th:href="@{/admin/users}" class="nav-btn active-link">Panel Admina</a>
+            <a th:href="@{/dashboard}" class="nav-btn">Mój Profil</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="nav-btn primary">Wyloguj</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container page-container admin-page-container">
+        <div class="page-header">
+            <h2>Panel Admina</h2>
+        </div>
+
+        <div class="tabs-container">
+            <a th:href="@{/admin/users}" class="tab-btn active">Użytkownicy</a>
+            <a th:href="@{/admin/playlists}" class="tab-btn">Wszystkie Playlisty</a>
+        </div>
+
+        <div class="alert alert-error" th:if="${errorMessage}" th:text="${errorMessage}">Błąd</div>
+
+        <form th:action="@{/admin/users}" method="get" class="admin-search-form">
+            <input type="text" name="q" placeholder="Szukaj po nazwie użytkownika" th:value="${searchQuery}">
+            <button type="submit" class="btn-outline">Szukaj</button>
+            <a th:if="${searchQuery != null and !searchQuery.isBlank()}" th:href="@{/admin/users}" class="btn-outline admin-link-btn">Wyczyść</a>
+        </form>
+
+        <p class="empty-state" th:if="${#lists.isEmpty(users)}">Brak użytkowników do wyświetlenia.</p>
+        <div class="admin-list" th:unless="${#lists.isEmpty(users)}">
+            <div class="admin-user-row" th:each="user : ${users}">
+                <div class="admin-user-info">
+                    <div class="playlist-title-row">
+                        <span class="playlist-card-title" th:text="${user.username}">username</span>
+                        <span class="playlist-badge" th:text="${user.role}">USER</span>
+                    </div>
+                    <div class="playlist-meta">
+                        <span th:text="${user.email}">email@example.com</span>
+                        <span th:text="'Dołączył: ' + ${#temporals.format(user.joinDate, 'dd-MM-yyyy HH:mm')}">Data</span>
+                    </div>
+                </div>
+                <div class="playlist-actions" th:if="${user.role.name() != 'ADMIN'}">
+                    <form th:if="${user.role.name() == 'USER' or user.role.name() == 'MODERATOR'}" th:action="@{/admin/users/{id}/toggle-moderator(id=${user.id})}" method="post">
+                        <button type="submit" class="btn-outline admin-role-btn" th:classappend="${user.role.name() == 'USER'} ? 'active' : ''" th:text="${user.role.name() == 'USER' ? 'Nadaj rolę moderatora' : 'Usuń rolę moderatora'}">Nadaj rolę moderatora</button>
+                    </form>
+                    <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tego użytkownika?');">
+                        <button type="submit" class="btn-delete" th:disabled="${currentUser != null and user.id == currentUser.id}">Usuń</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

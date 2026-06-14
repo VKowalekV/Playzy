@@ -17,7 +17,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/register", "/login", "/css/**", "/playlists").permitAll()
+                        .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response, accessDeniedException) -> response.sendRedirect("/")))
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/dashboard", true)

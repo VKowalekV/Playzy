@@ -42,6 +42,17 @@ public class PlaylistService {
         return playlistRepository.findByIsPublicTrueOrderByCreatedAtDesc();
     }
 
+    public List<Playlist> getAllPlaylists() {
+        return playlistRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public List<Playlist> searchPlaylists(String query) {
+        if (query == null || query.isBlank()) {
+            return getAllPlaylists();
+        }
+        return playlistRepository.findByNameContainingIgnoreCaseOrderByCreatedAtDesc(query.trim());
+    }
+
     @Transactional
     public void deletePlaylist(Long id, User currentUser) {
         playlistRepository.findById(id).ifPresent(playlist -> {
@@ -49,6 +60,11 @@ public class PlaylistService {
                 playlistRepository.delete(playlist);
             }
         });
+    }
+
+    @Transactional
+    public void deletePlaylistAsAdmin(Long id) {
+        playlistRepository.findById(id).ifPresent(playlistRepository::delete);
     }
 
     @Transactional

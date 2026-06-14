@@ -42,7 +42,7 @@ public class User {
     private LocalDateTime joinDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(20)")
     private Role role;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)

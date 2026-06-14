@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Admina - Playlisty</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <a th:href="@{/}" class="logo">Playzy</a>
+        <div class="nav-links">
+            <a th:href="@{/admin/users}" class="nav-btn active-link">Panel Admina</a>
+            <a th:href="@{/dashboard}" class="nav-btn">Mój Profil</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="nav-btn primary">Wyloguj</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container page-container admin-page-container">
+        <div class="page-header">
+            <h2>Panel Admina</h2>
+        </div>
+
+        <div class="tabs-container">
+            <a th:href="@{/admin/users}" class="tab-btn">Użytkownicy</a>
+            <a th:href="@{/admin/playlists}" class="tab-btn active">Wszystkie Playlisty</a>
+        </div>
+
+        <form th:action="@{/admin/playlists}" method="get" class="admin-search-form">
+            <input type="text" name="q" placeholder="Szukaj po nazwie playlisty" th:value="${searchQuery}">
+            <button type="submit" class="btn-outline">Szukaj</button>
+            <a th:if="${searchQuery != null and !searchQuery.isBlank()}" th:href="@{/admin/playlists}" class="btn-outline admin-link-btn">Wyczyść</a>
+        </form>
+
+        <p class="empty-state" th:if="${#lists.isEmpty(allPlaylists)}">Brak playlist do wyświetlenia.</p>
+        <div class="playlists-container" th:unless="${#lists.isEmpty(allPlaylists)}">
+            <div class="playlist-card" th:each="playlist : ${allPlaylists}">
+                <div class="playlist-img-placeholder">🎵</div>
+                <div class="playlist-info">
+                    <div class="playlist-title-row">
+                        <span class="playlist-card-title" th:text="${playlist.name}">Tytuł</span>
+                        <span class="playlist-badge" th:text="${playlist.public ? 'Publiczna' : 'Prywatna'}">Status</span>
+                    </div>
+                    <div class="playlist-meta">
+                        <span class="playlist-card-author" th:text="'Autor: ' + ${playlist.owner.username}">Autor</span>
+                        <span th:text="${#lists.size(playlist.tracks)} + ' utworów'">0 utworów</span>
+                    </div>
+                </div>
+                <div class="playlist-actions">
+                    <div class="playlist-stats">
+                        <span class="btn-icon admin-static-stat">👍 <span th:text="${playlist.likesCount}">0</span></span>
+                        <span class="btn-icon admin-static-stat">👎 <span th:text="${playlist.dislikesCount}">0</span></span>
+                    </div>
+                    <form th:action="@{/admin/playlists/{id}/delete(id=${playlist.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tę playlistę?');">
+                        <button type="submit" class="btn-delete">Usuń</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

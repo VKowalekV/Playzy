@@ -2,15 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Playzy - Mój Panel</title>
+    <title>Playzy - Mój Profil</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
     <nav class="navbar">
         <a th:href="@{/}" class="logo">Playzy</a>
         <div class="nav-links">
-            <a th:href="@{/playlists}" class="nav-btn">Publiczne Playlisty</a>
-            <a th:href="@{/library}" class="nav-btn">Biblioteka</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/users}" class="nav-btn">Panel Admina</a>
+            <a sec:authorize="!hasRole('ADMIN')" th:href="@{/playlists}" class="nav-btn">Publiczne Playlisty</a>
+            <a sec:authorize="!hasRole('ADMIN')" th:href="@{/library}" class="nav-btn">Biblioteka</a>
             <span class="user-greeting">Witaj, <strong sec:authentication="name"></strong></span>
             <form th:action="@{/logout}" method="post">
                 <button type="submit" class="nav-btn primary">Wyloguj</button>
@@ -19,12 +20,80 @@
     </nav>
 
     <div class="dashboard-card">
-        <h2>Panel Użytkownika</h2>
+        <h2>Mój Profil</h2>
+
+        <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}">Sukces</div>
         
-        <div class="user-info" th:if="${currentUser != null}">
-            <p><strong>Nazwa użytkownika:</strong> <span th:text="${currentUser.username}"></span></p>
-            <p><strong>Email:</strong> <span th:text="${currentUser.email}"></span></p>
-            <p><strong>Data dołączenia:</strong> <span th:text="${#temporals.format(currentUser.joinDate, 'dd-MM-yyyy HH:mm')}"></span></p>
+        <div class="profile-layout" th:if="${currentUser != null}">
+            <div class="user-info profile-summary">
+                <h3>Dane konta</h3>
+                <p><strong>Nazwa użytkownika:</strong> <span th:text="${currentUser.username}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${currentUser.email}"></span></p>
+                <p><strong>Data dołączenia:</strong> <span th:text="${#temporals.format(currentUser.joinDate, 'dd-MM-yyyy HH:mm')}"></span></p>
+            </div>
+
+            <div class="user-info profile-section">
+                <h3>Zmień nazwę użytkownika</h3>
+                <form th:action="@{/dashboard/username}" th:object="${usernameUpdateDto}" method="post">
+                    <div class="form-group">
+                        <label for="username">Nowa nazwa użytkownika</label>
+                        <input type="text" id="username" th:field="*{username}" required>
+                        <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Błąd nazwy</span>
+                    </div>
+                    <button type="submit" class="btn-outline active profile-submit-btn">Zapisz nazwę</button>
+                </form>
+            </div>
+
+            <div class="user-info profile-section">
+                <h3>Zmień email</h3>
+                <form th:action="@{/dashboard/email}" th:object="${emailUpdateDto}" method="post">
+                    <div class="form-group">
+                        <label for="email">Nowy email</label>
+                        <input type="email" id="email" th:field="*{email}" required>
+                        <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Błąd emaila</span>
+                    </div>
+                    <button type="submit" class="btn-outline active profile-submit-btn">Zapisz email</button>
+                </form>
+            </div>
+
+            <div class="user-info profile-section">
+                <h3>Zmień hasło</h3>
+                <form th:action="@{/dashboard/password}" th:object="${passwordChangeDto}" method="post">
+                    <div class="form-group">
+                        <label for="currentPassword">Obecne hasło</label>
+                        <input type="password" id="currentPassword" th:field="*{currentPassword}" required>
+                        <span class="error" th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}">Błąd hasła</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">Nowe hasło</label>
+                        <input type="password" id="newPassword" th:field="*{newPassword}" required>
+                        <span class="error" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}">Błąd hasła</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Powtórz nowe hasło</label>
+                        <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required>
+                        <span class="error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Błąd hasła</span>
+                        <span class="error" th:if="${#fields.hasErrors('passwordsEqual')}" th:errors="*{passwordsEqual}">Hasła nie są identyczne</span>
+                    </div>
+
+                    <button type="submit" class="btn-outline active profile-submit-btn">Zmień hasło</button>
+                </form>
+            </div>
+
+            <div class="user-info profile-section profile-danger-section">
+                <h3>Usuń konto</h3>
+                <p>Usunięcie konta jest nieodwracalne. Znikną też playlisty, których jesteś właścicielem.</p>
+                <form th:action="@{/dashboard/delete-account}" th:object="${deleteAccountDto}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć swoje konto?');">
+                    <div class="form-group">
+                        <label for="deletePassword">Potwierdź hasłem</label>
+                        <input type="password" id="deletePassword" th:field="*{password}" required>
+                        <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Błąd hasła</span>
+                    </div>
+                    <button type="submit" class="btn-delete profile-submit-btn">Usuń konto</button>
+                </form>
+            </div>
         </div>
     </div>
 </body>
