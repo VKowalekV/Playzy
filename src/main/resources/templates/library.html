@@ -2,10 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteka - Playzy</title>
+    <title>Playzy - Biblioteka</title>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/playlist-card.css}">
+    <link rel="stylesheet" th:href="@{/css/library.css}">
 </head>
 <body>
     <nav class="navbar">
@@ -24,17 +26,17 @@
     <div class="container page-container">
         <div class="page-header">
             <h2>Twoja Biblioteka</h2>
-            <button class="nav-btn primary" onclick="openModal()">+ Nowa Playlista</button>
+            <button class="nav-btn primary" onclick="openCreatePlaylistModal()">+ Nowa Playlista</button>
         </div>
         <div class="tabs-container">
             <button class="tab-btn active" onclick="switchTab(event, 'my-playlists')">Moje Playlisty</button>
             <button class="tab-btn" onclick="switchTab(event, 'followed-playlists')">Obserwowane</button>
         </div>
 
-        <div id="my-playlists" class="tab-content" style="display: block;">
+        <div id="my-playlists" class="tab-content active">
             <p class="empty-state" th:if="${#lists.isEmpty(myPlaylists)}">Nie masz żadnej playlisty.</p>
             <div class="playlists-container" th:unless="${#lists.isEmpty(myPlaylists)}">
-                <div class="playlist-card" th:each="playlist : ${myPlaylists}">
+                <div class="playlist-card" th:each="playlist : ${myPlaylists}" th:onclick="'goToPlaylist(event, ' + ${playlist.id} + ')'">
                     <div class="playlist-img-placeholder">🎵</div>
                     <div class="playlist-info">
                         <div class="playlist-title-row">
@@ -55,7 +57,7 @@
                                 👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span>
                             </button>
                         </div>
-                        <form th:action="@{/playlists/{id}/delete(id=${playlist.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tę playlistę?');" style="margin: 0;">
+                        <form th:action="@{/playlists/{id}/delete(id=${playlist.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tę playlistę?');">
                             <button type="submit" class="btn-delete">Usuń</button>
                         </form>
                     </div>
@@ -63,10 +65,10 @@
             </div>
         </div>
         
-        <div id="followed-playlists" class="tab-content" style="display: none;">
+        <div id="followed-playlists" class="tab-content">
             <p class="empty-state" th:if="${#lists.isEmpty(followedPlaylists)}">Nie obserwujesz żadnych playlist.</p>
             <div class="playlists-container" th:unless="${#lists.isEmpty(followedPlaylists)}">
-                <div class="playlist-card" th:each="playlist : ${followedPlaylists}">
+                <div class="playlist-card" th:each="playlist : ${followedPlaylists}" th:onclick="'goToPlaylist(event, ' + ${playlist.id} + ')'">
                     <div class="playlist-img-placeholder">🎵</div>
                     <div class="playlist-info">
                         <div class="playlist-title-row">
@@ -96,7 +98,7 @@
 
     <div id="createPlaylistModal" class="modal" th:classappend="${showCreateModal} ? 'show' : ''">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <span class="close-btn" onclick="closeCreatePlaylistModal()">&times;</span>
             <h3 class="modal-form-title">Stwórz Playlistę</h3>
             
             <form th:action="@{/playlists/create}" th:object="${playlistCreateDto}" method="post">
@@ -123,34 +125,6 @@
     </div>
 
     <script th:src="@{/js/playlists.js}"></script>
-    <script>
-        function switchTab(event, tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.display = 'none';
-            });
-
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            document.getElementById(tabId).style.display = 'block';
-            event.currentTarget.classList.add('active');
-        }
-
-        function openModal() {
-            document.getElementById('createPlaylistModal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('createPlaylistModal').classList.remove('show');
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('createPlaylistModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-    </script>
+    <script th:src="@{/js/library.js}"></script>
 </body>
 </html>

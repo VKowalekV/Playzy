@@ -1,0 +1,232 @@
+.playlist-details-header {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    align-items: stretch;
+}
+
+.playlist-details-cover {
+    width: 150px;
+    height: 150px;
+    background: var(--surface);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.playlist-details-info {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.playlist-details-badge {
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+.playlist-details-title {
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.1;
+    text-align: left;
+    word-break: break-word;
+}
+
+.playlist-details-desc {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.playlist-details-meta {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: auto;
+}
+
+.playlist-details-author {
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.playlist-details-controls {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.playlist-details-add-btn {
+    width: auto;
+}
+
+.spotify-modal-content {
+    max-width: 600px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.spotify-modal-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 1.5rem;
+}
+
+.spotify-search-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
+
+.spotify-loading {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 1rem;
+}
+
+.spotify-results-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.spotify-empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.spotify-error-state {
+    color: var(--error-color);
+}
+
+.padded-empty-state {
+    text-align: center;
+    padding: 2rem;
+}
+
+.playlist-track-embed-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.playlist-track-iframe {
+    border-radius: 12px;
+    display: block;
+    width: 100%;
+    height: 80px;
+}
+
+.playlist-track-delete-form {
+    margin: 0;
+    display: inline-block;
+}
+
+.spotify-modal-title {
+    margin: 0;
+}
+
+.spotify-track-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.spotify-track-cover {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.spotify-track-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.spotify-track-title {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-track-artist {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-track-duration {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.spotify-track-add-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    width: 80px;
+    text-align: center;
+    flex-shrink: 0;
+    height: auto;
+}
+
+.spotify-track-add-btn.added {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+.playlist-track-wrapper {
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.5rem 0;
+}
+
+.playlist-track-wrapper:last-child {
+    border-bottom: none;
+}
+
+.tracks-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+}
+
+.playlist-track-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+}
+
+.playlist-track-content:hover {
+    background-color: #ffffff0d;
+}
+
+.playlist-track-index {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    width: 40px;
+    text-align: center;
+}

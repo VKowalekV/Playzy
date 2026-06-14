@@ -9,6 +9,8 @@ import pl.playzy.model.Playlist;
 import pl.playzy.model.User;
 import pl.playzy.repository.UserRepository;
 import pl.playzy.service.PlaylistService;
+import pl.playzy.dto.TrackDto;
+import pl.playzy.model.PlaylistTrack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class PlaylistRestController {
     public ResponseEntity<Map<String, Object>> toggleFollow(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
-        
+
         if (userDetails == null) {
             return ResponseEntity.status(401).build();
         }
@@ -72,5 +74,28 @@ public class PlaylistRestController {
         response.put("userRating", updatedPlaylist.getUserRating(user));
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{id}/tracks")
+    public ResponseEntity<?> addTrack(
+            @PathVariable Long id,
+            @RequestBody TrackDto trackDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        try {
+            PlaylistTrack addedTrack = playlistService.addTrack(id, user, trackDto);
+            return ResponseEntity.ok(addedTrack);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 }
