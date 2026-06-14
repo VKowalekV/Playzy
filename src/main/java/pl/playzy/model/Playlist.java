@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import org.hibernate.annotations.Formula;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -33,17 +34,11 @@ public class Playlist {
 
     private boolean isPublic;
 
-    public int getLikesCount() {
-        if (ratings == null)
-            return 0;
-        return (int) ratings.stream().filter(PlaylistRating::isLike).count();
-    }
+    @Formula("(SELECT COUNT(r.id) FROM playlist_ratings r WHERE r.playlist_id = id AND r.is_like = true)")
+    private int likesCount;
 
-    public int getDislikesCount() {
-        if (ratings == null)
-            return 0;
-        return (int) ratings.stream().filter(r -> !r.isLike()).count();
-    }
+    @Formula("(SELECT COUNT(r.id) FROM playlist_ratings r WHERE r.playlist_id = id AND r.is_like = false)")
+    private int dislikesCount;
 
     public Boolean getUserRating(User user) {
         if (user == null || ratings == null) return null;
@@ -84,14 +79,11 @@ public class Playlist {
     @Builder.Default
     private Set<User> coCreators = new HashSet<>();
 
-    public double getTotalDurationMinutes() {
-        if (tracks == null) return 0.0;
-        return tracks.stream().mapToDouble(PlaylistTrack::getDurationMinutes).sum();
-    }
+    @Formula("(SELECT COALESCE(SUM(t.duration_minutes), 0) FROM playlist_tracks t WHERE t.playlist_id = id)")
+    private double totalDurationMinutes;
 
     public String getTotalDurationFormatted() {
-        if (tracks == null || tracks.isEmpty()) return "0 min";
-        double totalMinutes = tracks.stream().mapToDouble(PlaylistTrack::getDurationMinutes).sum();
+        double totalMinutes = this.totalDurationMinutes;
         long totalSeconds = Math.round(totalMinutes * 60);
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;

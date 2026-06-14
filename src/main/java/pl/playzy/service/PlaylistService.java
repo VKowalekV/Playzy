@@ -12,6 +12,8 @@ import pl.playzy.model.User;
 import pl.playzy.repository.PlaylistRepository;
 import pl.playzy.repository.PlaylistTrackRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,9 @@ public class PlaylistService {
 
     private final PlaylistRepository playlistRepository;
     private final PlaylistTrackRepository playlistTrackRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     public void createPlaylist(PlaylistCreateDto dto, User owner) {
@@ -110,7 +115,10 @@ public class PlaylistService {
                         .build();
                 playlist.getRatings().add(newRating);
             }
-            return playlistRepository.save(playlist);
+            playlist = playlistRepository.save(playlist);
+            entityManager.flush();
+            entityManager.refresh(playlist);
+            return playlist;
         }).orElse(null);
     }
 
