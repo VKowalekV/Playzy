@@ -40,5 +40,22 @@
             <a th:href="@{/admin/users}"><button>Przejdź do panelu admina</button></a>
         </div>
     </main>
+
+    <section class="song-of-the-day-section" th:if="${topPlaylist != null}">
+        <div class="container">
+            <h2 class="section-title">Najbardziej Lubiana Playlista</h2>
+            <div class="sotd-card">
+                <div class="sotd-info">
+                    <h3 th:text="${topPlaylist.name}">Nazwa playlisty</h3>
+                    <p class="sotd-artist" th:text="'Autor: ' + ${topPlaylist.ownerUsername}">Autor</p>
+                    <p th:if="${topPlaylist.description != null}" th:text="${topPlaylist.description}">Opis</p>
+                    <p class="sotd-artist" th:text="'Polubienia: ' + ${topPlaylist.likesCount} + ' | Utwory: ' + ${topPlaylist.tracksCount}">Statystyki</p>
+                    <div class="sotd-actions">
+                        <a th:href="@{/playlists/{id}(id=${topPlaylist.id})}" class="btn-outline">Zobacz Playlistę</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

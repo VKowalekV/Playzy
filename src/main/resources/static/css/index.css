@@ -6,6 +6,7 @@
     align-items: center;
     text-align: center;
     padding: 4rem 1rem;
+    margin-top: 8rem;
 }
 
 .hero h1 {
@@ -40,4 +41,46 @@
     width: auto;
     padding: 1rem 2rem;
     font-size: 1.1rem;
+}
+
+.song-of-the-day-section {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--white);
+}
+
+.sotd-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.sotd-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.sotd-artist {
+    color: var(--text-secondary);
+}
+
+.sotd-actions {
+    margin-top: 1.5rem;
+}
+
+.sotd-actions .btn-outline {
+    width: auto;
+    padding: 0 1.5rem;
+    text-decoration: none;
 }

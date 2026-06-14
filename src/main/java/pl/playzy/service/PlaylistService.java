@@ -59,6 +59,10 @@ public class PlaylistService {
         return playlistRepository.findByNameContainingIgnoreCaseOrderByCreatedAtDesc(query.trim());
     }
 
+    public Playlist getMostLikedPublicPlaylist() {
+        return playlistRepository.findMostLikedPublicPlaylist();
+    }
+
     @Transactional
     public void deletePlaylist(Long id, User currentUser) {
         playlistRepository.findById(id).ifPresent(playlist -> {

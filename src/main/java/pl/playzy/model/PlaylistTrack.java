@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "playlist_tracks")
 @Getter
@@ -39,7 +41,7 @@ public class PlaylistTrack {
     @NotNull
     private LocalDateTime addedAt;
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "playlist_id", nullable = false)
     private Playlist playlist;

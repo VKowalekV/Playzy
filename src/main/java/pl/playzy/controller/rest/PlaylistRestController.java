@@ -10,6 +10,7 @@ import pl.playzy.model.User;
 import pl.playzy.repository.UserRepository;
 import pl.playzy.service.PlaylistService;
 import pl.playzy.dto.TrackDto;
+import pl.playzy.dto.TopPlaylistDto;
 import pl.playzy.model.PlaylistTrack;
 
 import java.util.HashMap;
@@ -22,6 +23,23 @@ public class PlaylistRestController {
 
     private final PlaylistService playlistService;
     private final UserRepository userRepository;
+
+    @GetMapping("/top")
+    public ResponseEntity<TopPlaylistDto> getTopPlaylist() {
+        Playlist top = playlistService.getMostLikedPublicPlaylist();
+        if (top == null) {
+            return ResponseEntity.notFound().build();
+        }
+        TopPlaylistDto dto = TopPlaylistDto.builder()
+                .id(top.getId())
+                .name(top.getName())
+                .description(top.getDescription())
+                .ownerUsername(top.getOwner().getUsername())
+                .likesCount(top.getLikesCount())
+                .tracksCount(top.getTracks().size())
+                .build();
+        return ResponseEntity.ok(dto);
+    }
 
     @PostMapping("/{id}/toggle-follow")
     public ResponseEntity<Map<String, Object>> toggleFollow(
