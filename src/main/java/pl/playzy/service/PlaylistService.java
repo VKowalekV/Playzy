@@ -65,7 +65,7 @@ public class PlaylistService {
     }
 
     public Playlist getMostLikedPublicPlaylist() {
-        return playlistRepository.findMostLikedPublicPlaylist();
+        return playlistRepository.findFirstByIsPublicTrueOrderByLikesCountDesc();
     }
 
     @Transactional
