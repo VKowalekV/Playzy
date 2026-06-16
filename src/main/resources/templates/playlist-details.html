@@ -84,7 +84,7 @@
                     </div>
                     <div th:if="${canEdit}">
                         <form th:action="@{/playlists/{id}/tracks/{trackId}/delete(id=${playlist.id}, trackId=${track.id})}" method="post" class="playlist-track-delete-form" onsubmit="return confirm('Czy na pewno chcesz usunąć ten utwór z playlisty?');">
-                            <button type="submit" class="btn-delete">Usuń</button>
+                            <button type="submit" class="btn-delete">🗑️ Usuń</button>
                         </form>
                     </div>
                 </div>

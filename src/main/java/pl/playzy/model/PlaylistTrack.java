@@ -22,23 +22,19 @@ public class PlaylistTrack {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NotBlank
     @Column(nullable = false)
     private String spotifyId;
 
-    @NotBlank
     @Column(nullable = false)
     private String title;
 
-    @NotBlank
     @Column(nullable = false)
     private String artist;
 
-    @Min(value = 0, message = "Czas trwania nie może być ujemny")
-    @Max(value = 1000, message = "Czas trwania nie może być większy niż 1000 minut")
+    @Column(nullable = false)
     private double durationMinutes;
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDateTime addedAt;
 
     @JsonIgnore

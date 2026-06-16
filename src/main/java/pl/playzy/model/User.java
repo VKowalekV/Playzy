@@ -22,22 +22,15 @@ public class User {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NotBlank
-    @Size(min = 3, max = 50, message = "Nazwa użytkownika musi mieć od 3 do 50 znaków")
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @NotBlank
-    @Email(regexp = "^[A-Za-z0-9+_.-]+@(.+)$", message = "Nieprawidłowy format email")
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank
-    @Size(min = 8, message = "Hasło musi mieć co najmniej 8 znaków")
+    @Column(nullable = false)
     private String password;
 
-    @NotNull
-    @PastOrPresent(message = "Data dołączenia nie może być z przyszłości")
     @Column(nullable = false)
     private LocalDateTime joinDate;
 

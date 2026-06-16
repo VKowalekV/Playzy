@@ -173,7 +173,7 @@ function appendTrackToPlaylistDOM(savedTrack) {
             ${canEdit ? `<div>
                 <form action="/playlists/${playlistId}/tracks/${savedTrack.id}/delete" method="post" class="playlist-track-delete-form" onsubmit="return confirm('Czy na pewno chcesz usunąć ten utwór z playlisty?');">
                     <input type="hidden" name="_csrf" value="${csrfToken}"/>
-                    <button type="submit" class="btn-delete">Usuń</button>
+                    <button type="submit" class="btn-delete">🗑️ Usuń</button>
                 </form>
             </div>` : ''}
         </div>

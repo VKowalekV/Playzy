@@ -24,12 +24,10 @@ public class Playlist {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NotBlank
-    @Size(min = 3, max = 100, message = "Nazwa playlisty musi mieć od 3 do 100 znaków")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Size(max = 500, message = "Opis może mieć maksymalnie 500 znaków")
+    @Column(length = 500)
     private String description;
 
     private boolean isPublic;
@@ -41,7 +39,8 @@ public class Playlist {
     private int dislikesCount;
 
     public Boolean getUserRating(User user) {
-        if (user == null || ratings == null) return null;
+        if (user == null || ratings == null)
+            return null;
         return ratings.stream()
                 .filter(r -> r.getUser().getId().equals(user.getId()))
                 .map(PlaylistRating::isLike)
@@ -50,7 +49,8 @@ public class Playlist {
     }
 
     public boolean isFollowedBy(User user) {
-        if (user == null || followers == null) return false;
+        if (user == null || followers == null)
+            return false;
         return followers.stream().anyMatch(u -> u.getId().equals(user.getId()));
     }
 
@@ -63,7 +63,7 @@ public class Playlist {
     @Builder.Default
     private List<PlaylistRating> ratings = new java.util.ArrayList<>();
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -88,7 +88,7 @@ public class Playlist {
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;
         long seconds = totalSeconds % 60;
-        
+
         if (hours > 0) {
             return String.format("%d godz. %d min", hours, minutes);
         } else {
