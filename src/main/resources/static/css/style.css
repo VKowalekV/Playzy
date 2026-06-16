@@ -212,6 +212,7 @@ button:hover {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    text-decoration: none;
 }
 
 .btn-outline.active {

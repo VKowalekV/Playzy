@@ -19,7 +19,7 @@
         
         <div class="form-group">
             <label for="username">Nazwa użytkownika:</label>
-            <input type="text" id="username" th:field="*{username}" required autofocus>
+            <input type="text" id="username" th:field="*{username}" minlength="3" maxlength="50" required autofocus>
             <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
         </div>
         
@@ -31,13 +31,13 @@
 
         <div class="form-group">
             <label for="password">Hasło:</label>
-            <input type="password" id="password" name="password" th:value="*{password}" required>
+            <input type="password" id="password" name="password" th:value="*{password}" minlength="8" required>
             <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
         </div>
 
         <div class="form-group">
             <label for="confirmPassword">Powtórz hasło:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" th:value="*{confirmPassword}" required>
+            <input type="password" id="confirmPassword" name="confirmPassword" th:value="*{confirmPassword}" minlength="8" required>
             <span class="error" th:if="${#fields.hasErrors('passwordsEqual')}" th:errors="*{passwordsEqual}"></span>
         </div>
 

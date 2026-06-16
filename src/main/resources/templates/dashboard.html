@@ -39,7 +39,7 @@
                 <form th:action="@{/dashboard/username}" th:object="${usernameUpdateDto}" method="post">
                     <div class="form-group">
                         <label for="username">Nowa nazwa użytkownika</label>
-                        <input type="text" id="username" th:field="*{username}" required>
+                        <input type="text" id="username" th:field="*{username}" minlength="3" maxlength="50" required>
                         <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Błąd nazwy</span>
                     </div>
                     <button type="submit" class="btn-outline active profile-submit-btn">Zapisz nazwę</button>
@@ -69,13 +69,13 @@
 
                     <div class="form-group">
                         <label for="newPassword">Nowe hasło</label>
-                        <input type="password" id="newPassword" th:field="*{newPassword}" required>
+                        <input type="password" id="newPassword" th:field="*{newPassword}" minlength="8" required>
                         <span class="error" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}">Błąd hasła</span>
                     </div>
 
                     <div class="form-group">
                         <label for="confirmPassword">Powtórz nowe hasło</label>
-                        <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required>
+                        <input type="password" id="confirmPassword" th:field="*{confirmPassword}" minlength="8" required>
                         <span class="error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Błąd hasła</span>
                         <span class="error" th:if="${#fields.hasErrors('passwordsEqual')}" th:errors="*{passwordsEqual}">Hasła nie są identyczne</span>
                     </div>
