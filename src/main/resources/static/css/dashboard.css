@@ -4,9 +4,9 @@
     border-radius: 16px;
     box-shadow: 0 10px 40px var(--shadow-color);
     border: 1px solid var(--border-color);
-    margin: 3rem auto;
-    max-width: 600px;
-    width: 90%;
+    margin: 4rem auto;
+    max-width: 800px;
+    width: 100%;
 }
 
 .dashboard-card h2 {
