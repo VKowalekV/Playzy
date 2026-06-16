@@ -34,13 +34,18 @@
                 🎵
             </div>
             <div class="playlist-details-info">
-                <span class="playlist-badge playlist-details-badge" th:text="${playlist.public ? 'Publiczna' : 'Prywatna'}">Status</span>
-                <h1 class="playlist-details-title" th:text="${playlist.name}">Tytuł</h1>
-                <p class="playlist-details-desc" th:if="${playlist.description != null and !playlist.description.isEmpty()}" th:text="${playlist.description}">Opis</p>
+                <div class="playlist-details-title-row">
+                    <h1 class="playlist-details-title" th:text="${playlist.name}" th:title="${playlist.name}">Tytuł</h1>
+                    <span class="playlist-badge playlist-details-badge" th:text="${playlist.public ? 'Publiczna' : 'Prywatna'}">Status</span>
+                </div>
+                <p class="playlist-details-desc" th:text="${#strings.isEmpty(playlist.description) ? 'Brak opisu...' : playlist.description}">Opis</p>
                 <div class="playlist-details-meta">
                     <span>Autor: </span>
                     <span class="playlist-details-author" th:text="${playlist.owner.username}">Autor</span>
                     <span>•</span>
+                    <span th:text="${#lists.size(playlist.coCreators)} + ' współtwórców'">0 współtwórców</span>
+                </div>
+                <div class="playlist-details-meta">
                     <span th:text="${#lists.size(playlist.followers)} + ' obserwujących'">0 obserwujących</span>
                     <span>•</span>
                     <span id="total-tracks" th:text="${#lists.size(playlist.tracks)} + ' utworów'">0 utworów</span>
@@ -54,6 +59,17 @@
             <button th:if="${canEdit}" class="nav-btn primary playlist-details-add-btn" onclick="openSpotifyModal()">
                 + Dodaj utwory
             </button>
+            <button th:if="${isOwner}" class="nav-btn playlist-details-edit-btn" onclick="openEditPlaylistModal()">
+                ✏️ Edytuj
+            </button>
+            <button th:if="${isOwner}" class="nav-btn playlist-details-edit-btn" onclick="openAddCoCreatorModal()">
+                👥 Współtwórcy
+            </button>
+            <form th:if="${isOwner}" th:action="@{/playlists/{id}/delete(id=${playlist.id})}" method="post" style="margin:0; display:inline-block;" onsubmit="return confirm('Czy na pewno chcesz usunąć CAŁĄ playlistę? Tej operacji nie można cofnąć.');">
+                <button type="submit" class="btn-delete" style="height: auto; padding: 0.6rem 1.2rem; margin: 0; font-weight: 500; font-size: 1rem; border-radius: 8px;">
+                    🗑 Usuń
+                </button>
+            </form>
         </div>
 
         <div class="tracks-container">
@@ -92,6 +108,53 @@
                     <div class="spotify-empty-state">Zacznij pisać, aby przeszukać bazę Spotify...</div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="editPlaylistModal" class="modal" th:classappend="${showEditModal} ? 'show' : ''">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditPlaylistModal()">&times;</span>
+            <h3 class="modal-form-title">Edytuj Playlistę</h3>
+            
+            <form th:action="@{/playlists/{id}/edit(id=${playlist.id})}" th:object="${playlistUpdateDto}" method="post">
+                <div class="form-group">
+                    <label for="name">Nazwa playlisty</label>
+                    <input type="text" id="name" th:field="*{name}" placeholder="Np. trapshit" required>
+                    <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Błąd nazwy</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Opis (opcjonalnie)</label>
+                    <textarea id="description" th:field="*{description}" placeholder="Krótki opis playlisty..." rows="3" class="modal-textarea"></textarea>
+                    <div class="error-msg" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Błąd opisu</div>
+                </div>
+
+                <div class="form-group modal-checkbox-group">
+                    <input type="checkbox" id="isPublic" th:field="*{public}">
+                    <label for="isPublic">Playlista publiczna (widoczna dla innych)</label>
+                </div>
+
+                <button type="submit" class="modal-submit-btn">Zapisz</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addCoCreatorModal" class="modal" th:classappend="${showAddCoCreatorModal} ? 'show' : ''">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAddCoCreatorModal()">&times;</span>
+            <h3 class="modal-form-title">Dodaj Współtwórcę</h3>
+            
+            <form th:action="@{/playlists/{id}/co-creators/add(id=${playlist.id})}" method="post">
+                <div class="alert alert-success" th:if="${coCreatorSuccess}" th:text="${coCreatorSuccess}">Sukces!</div>
+                <div class="alert alert-error" th:if="${coCreatorError}" th:text="${coCreatorError}">Błąd</div>
+
+                <div class="form-group">
+                    <label for="username">Nazwa użytkownika</label>
+                    <input type="text" id="username" name="username" placeholder="Wpisz nazwę użytkownika..." required>
+                </div>
+
+                <button type="submit" class="modal-submit-btn">Dodaj</button>
+            </form>
         </div>
     </div>
 

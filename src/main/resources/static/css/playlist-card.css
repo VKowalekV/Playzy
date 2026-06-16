@@ -47,6 +47,7 @@
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    min-width: 0;
 }
 
 .playlist-card-title {
@@ -57,23 +58,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
 }
 
-.playlist-badge {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 12px;
-    background-color: var(--border-color);
-    color: var(--text-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
-    flex-shrink: 0;
-}
 
-.playlist-badge-owned {
-    background-color: var(--accent-primary);
-    color: white;
-}
 
 .playlist-meta {
     display: flex;
@@ -92,6 +80,7 @@
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    flex-shrink: 0;
 }
 
 .playlist-stats {

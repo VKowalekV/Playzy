@@ -3,6 +3,8 @@ const searchInput = document.getElementById('spotifySearchInput');
 const resultsContainer = document.getElementById('spotify-results');
 const loadingIndicator = document.getElementById('spotify-loading');
 const playlistId = document.getElementById('playlist-page-container').dataset.playlistId;
+const editPlaylistModal = document.getElementById('editPlaylistModal');
+const addCoCreatorModal = document.getElementById('addCoCreatorModal');
 
 let debounceTimer;
 let currentSearchId = 0;
@@ -51,6 +53,30 @@ function openSpotifyModal() {
 function closeSpotifyModal() {
     modal.classList.remove('show');
     resultsContainer.innerHTML = '<div class="spotify-empty-state">Zacznij pisać, aby przeszukać bazę Spotify...</div>';
+}
+
+function openEditPlaylistModal() {
+    if (editPlaylistModal) {
+        editPlaylistModal.classList.add('show');
+    }
+}
+
+function closeEditPlaylistModal() {
+    if (editPlaylistModal) {
+        editPlaylistModal.classList.remove('show');
+    }
+}
+
+function openAddCoCreatorModal() {
+    if (addCoCreatorModal) {
+        addCoCreatorModal.classList.add('show');
+    }
+}
+
+function closeAddCoCreatorModal() {
+    if (addCoCreatorModal) {
+        addCoCreatorModal.classList.remove('show');
+    }
 }
 
 searchInput.addEventListener('input', (e) => {

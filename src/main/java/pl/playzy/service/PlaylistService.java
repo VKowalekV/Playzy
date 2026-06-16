@@ -11,6 +11,7 @@ import pl.playzy.model.PlaylistTrack;
 import pl.playzy.model.User;
 import pl.playzy.repository.PlaylistRepository;
 import pl.playzy.repository.PlaylistTrackRepository;
+import pl.playzy.repository.UserRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -24,6 +25,7 @@ public class PlaylistService {
 
     private final PlaylistRepository playlistRepository;
     private final PlaylistTrackRepository playlistTrackRepository;
+    private final UserRepository userRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -38,6 +40,48 @@ public class PlaylistService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
+        playlistRepository.save(playlist);
+    }
+
+    @Transactional
+    public void updatePlaylist(Long id, PlaylistCreateDto dto, User currentUser) {
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono playlisty"));
+
+        boolean isAdmin = currentUser.getRole() == pl.playzy.model.Role.ADMIN;
+        if (!isAdmin && !playlist.getOwner().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Tylko właściciel może edytować ustawienia playlisty");
+        }
+
+        playlist.setName(dto.getName());
+        playlist.setDescription(dto.getDescription());
+        playlist.setPublic(dto.isPublic());
+
+        playlistRepository.save(playlist);
+    }
+
+    @Transactional
+    public void addCoCreator(Long playlistId, String username, User currentUser) {
+        Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono playlisty"));
+
+        boolean isAdmin = currentUser.getRole() == pl.playzy.model.Role.ADMIN;
+        if (!isAdmin && !playlist.getOwner().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Tylko właściciel może dodawać współtwórców");
+        }
+
+        User newCoCreator = userRepository.findByUsername(username.toLowerCase())
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika o podanej nazwie: " + username));
+
+        if (newCoCreator.getId().equals(playlist.getOwner().getId())) {
+            throw new RuntimeException("Właściciel nie może być współtwórcą");
+        }
+
+        if (playlist.getCoCreators().contains(newCoCreator)) {
+            throw new RuntimeException("Ten użytkownik jest już współtwórcą");
+        }
+
+        playlist.getCoCreators().add(newCoCreator);
         playlistRepository.save(playlist);
     }
 
@@ -75,7 +119,8 @@ public class PlaylistService {
     @Transactional
     public void deletePlaylist(Long id, User currentUser) {
         playlistRepository.findById(id).ifPresent(playlist -> {
-            if (playlist.getOwner().getId().equals(currentUser.getId())) {
+            boolean isAdmin = currentUser.getRole() == pl.playzy.model.Role.ADMIN;
+            if (isAdmin || playlist.getOwner().getId().equals(currentUser.getId())) {
                 playlistRepository.delete(playlist);
             }
         });
@@ -135,7 +180,8 @@ public class PlaylistService {
         Playlist playlist = playlistRepository.findById(playlistId)
                 .orElseThrow(() -> new RuntimeException("Nie znalexiono playlisty"));
 
-        if (!playlist.getOwner().getId().equals(currentUser.getId()) &&
+        boolean isAdmin = currentUser.getRole() == pl.playzy.model.Role.ADMIN;
+        if (!isAdmin && !playlist.getOwner().getId().equals(currentUser.getId()) &&
                 !playlist.getCoCreators().contains(currentUser)) {
             throw new RuntimeException("Nie masz uprawnień by edytować tę playlistę");
         }
@@ -167,7 +213,8 @@ public class PlaylistService {
         Playlist playlist = playlistRepository.findById(playlistId)
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono playlisty"));
 
-        if (!playlist.getOwner().getId().equals(currentUser.getId()) &&
+        boolean isAdmin = currentUser.getRole() == pl.playzy.model.Role.ADMIN;
+        if (!isAdmin && !playlist.getOwner().getId().equals(currentUser.getId()) &&
                 !playlist.getCoCreators().contains(currentUser)) {
             throw new RuntimeException("Nie masz uprawnień by edytować tę playlistę");
         }

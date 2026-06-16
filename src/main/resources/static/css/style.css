@@ -405,3 +405,19 @@ form {
 .modal-submit-btn {
     margin-top: 1.5rem;
 }
+
+.playlist-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    background-color: var(--border-color);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.playlist-badge-owned {
+    background-color: var(--accent-primary);
+    color: white;
+}

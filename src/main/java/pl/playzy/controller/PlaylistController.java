@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import pl.playzy.dto.PlaylistCreateDto;
 import pl.playzy.model.Playlist;
 import pl.playzy.model.User;
@@ -70,10 +73,13 @@ public class PlaylistController {
     public String createPlaylist(@Valid @ModelAttribute("playlistCreateDto") PlaylistCreateDto dto,
             BindingResult bindingResult,
             @AuthenticationPrincipal UserDetails userDetails,
-            Model model) {
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("showCreateModal", true);
-            return "library";
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.playlistCreateDto",
+                    bindingResult);
+            redirectAttributes.addFlashAttribute("playlistCreateDto", dto);
+            redirectAttributes.addFlashAttribute("showCreateModal", true);
+            return "redirect:/library";
         }
 
         User owner = userRepository.findByUsername(userDetails.getUsername().toLowerCase())
@@ -92,17 +98,51 @@ public class PlaylistController {
         model.addAttribute("playlist", playlist);
 
         boolean canEdit = false;
+        boolean isOwner = false;
         if (userDetails != null) {
             User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
             if (user != null) {
-                if (playlist.getOwner().getId().equals(user.getId()) || playlist.getCoCreators().contains(user)) {
+                boolean isAdmin = user.getRole() == pl.playzy.model.Role.ADMIN;
+                if (isAdmin || playlist.getOwner().getId().equals(user.getId()) || playlist.getCoCreators().contains(user)) {
                     canEdit = true;
+                }
+                if (isAdmin || playlist.getOwner().getId().equals(user.getId())) {
+                    isOwner = true;
                 }
             }
         }
         model.addAttribute("canEdit", canEdit);
+        model.addAttribute("isOwner", isOwner);
+
+        if (!model.containsAttribute("playlistUpdateDto")) {
+            PlaylistCreateDto dto = new PlaylistCreateDto();
+            dto.setName(playlist.getName());
+            dto.setDescription(playlist.getDescription());
+            dto.setPublic(playlist.isPublic());
+            model.addAttribute("playlistUpdateDto", dto);
+        }
 
         return "playlist-details";
+    }
+
+    @PostMapping("/playlists/{id}/edit")
+    public String editPlaylist(@PathVariable Long id, @Valid @ModelAttribute("playlistUpdateDto") PlaylistCreateDto dto,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.playlistUpdateDto",
+                    bindingResult);
+            redirectAttributes.addFlashAttribute("playlistUpdateDto", dto);
+            redirectAttributes.addFlashAttribute("showEditModal", true);
+            return "redirect:/playlists/" + id;
+        }
+
+        User currentUser = userRepository.findByUsername(userDetails.getUsername().toLowerCase())
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+
+        playlistService.updatePlaylist(id, dto, currentUser);
+        return "redirect:/playlists/" + id;
     }
 
     @ModelAttribute("currentUser")
@@ -111,6 +151,25 @@ public class PlaylistController {
             return userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
         }
         return null;
+    }
+
+    @PostMapping("/playlists/{id}/co-creators/add")
+    public String addCoCreator(@PathVariable Long id, @RequestParam("username") String username,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        if (userDetails != null) {
+            User currentUser = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
+            if (currentUser != null) {
+                try {
+                    playlistService.addCoCreator(id, username, currentUser);
+                    redirectAttributes.addFlashAttribute("coCreatorSuccess", "Pomyślnie dodano współtwórcę!");
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute("coCreatorError", e.getMessage());
+                    redirectAttributes.addFlashAttribute("showAddCoCreatorModal", true);
+                }
+            }
+        }
+        return "redirect:/playlists/" + id;
     }
 
     @PostMapping("/playlists/{id}/delete")

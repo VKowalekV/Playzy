@@ -23,25 +23,39 @@
     text-align: left;
     display: flex;
     flex-direction: column;
+    min-width: 0;
+}
+
+.playlist-details-title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .playlist-details-badge {
-    margin-bottom: 0.5rem;
-    display: inline-block;
-    align-self: flex-start;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
 }
 
 .playlist-details-title {
     font-size: 2rem;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.1;
+    margin: 0;
+    line-height: 1.2;
     text-align: left;
-    word-break: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .playlist-details-desc {
     color: var(--text-secondary);
     margin-bottom: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .playlist-details-meta {
@@ -64,6 +78,16 @@
 
 .playlist-details-add-btn {
     width: auto;
+}
+
+.playlist-details-edit-btn {
+    width: auto;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+}
+
+.playlist-details-edit-btn:hover {
+    background-color: var(--border-color);
 }
 
 .spotify-modal-content {
