@@ -99,7 +99,7 @@ function updateFollowButtonDOM(playlistId, isFollowed) {
 }
 
 function removePlaylistCardIfUnfollowedInLibrary(btn, isFollowed) {
-    if (window.location.pathname !== '/library' || isFollowed) {
+    if (window.location.pathname !== '/library/followed' || isFollowed) {
         return;
     }
 

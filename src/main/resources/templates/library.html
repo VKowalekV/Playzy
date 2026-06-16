@@ -29,11 +29,12 @@
             <button class="nav-btn primary" onclick="openCreatePlaylistModal()">+ Nowa Playlista</button>
         </div>
         <div class="tabs-container">
-            <button class="tab-btn active" onclick="switchTab(event, 'my-playlists')">Moje Playlisty</button>
-            <button class="tab-btn" onclick="switchTab(event, 'followed-playlists')">Obserwowane</button>
+            <a th:href="@{/library}" class="tab-btn" th:classappend="${activeTab == 'my'} ? 'active' : ''">Moje Playlisty</a>
+            <a th:href="@{/library/followed}" class="tab-btn" th:classappend="${activeTab == 'followed'} ? 'active' : ''">Obserwowane</a>
+            <a th:href="@{/library/collaborative}" class="tab-btn" th:classappend="${activeTab == 'collaborative'} ? 'active' : ''">Współtworzone</a>
         </div>
 
-        <div id="my-playlists" class="tab-content active">
+        <div id="my-playlists" class="tab-content active" th:if="${activeTab == 'my'}">
             <p class="empty-state" th:if="${#lists.isEmpty(myPlaylists)}">Nie masz żadnej playlisty.</p>
             <div class="playlists-container" th:unless="${#lists.isEmpty(myPlaylists)}">
                 <div class="playlist-card" th:each="playlist : ${myPlaylists}" th:onclick="'goToPlaylist(event, ' + ${playlist.id} + ')'">
@@ -65,7 +66,7 @@
             </div>
         </div>
         
-        <div id="followed-playlists" class="tab-content">
+        <div id="followed-playlists" class="tab-content active" th:if="${activeTab == 'followed'}">
             <p class="empty-state" th:if="${#lists.isEmpty(followedPlaylists)}">Nie obserwujesz żadnych playlist.</p>
             <div class="playlists-container" th:unless="${#lists.isEmpty(followedPlaylists)}">
                 <div class="playlist-card" th:each="playlist : ${followedPlaylists}" th:onclick="'goToPlaylist(event, ' + ${playlist.id} + ')'">
@@ -90,6 +91,35 @@
                             </button>
                         </div>
                         <button th:id="'follow-btn-' + ${playlist.id}" type="button" class="btn-outline" th:onclick="'toggleFollow(event, ' + ${playlist.id} + ')'">Odobserwuj</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="collaborative-playlists" class="tab-content active" th:if="${activeTab == 'collaborative'}">
+            <p class="empty-state" th:if="${#lists.isEmpty(collaborativePlaylists)}">Nie współtworzysz żadnych playlist.</p>
+            <div class="playlists-container" th:unless="${#lists.isEmpty(collaborativePlaylists)}">
+                <div class="playlist-card" th:each="playlist : ${collaborativePlaylists}" th:onclick="'goToPlaylist(event, ' + ${playlist.id} + ')'">
+                    <div class="playlist-img-placeholder">🎵</div>
+                    <div class="playlist-info">
+                        <div class="playlist-title-row">
+                            <span class="playlist-card-title" th:text="${playlist.name}">Tytuł</span>
+                            <span class="playlist-badge" th:text="${playlist.public ? 'Publiczna' : 'Prywatna'}">Status</span>
+                        </div>
+                        <div class="playlist-meta">
+                            <span class="playlist-card-author" th:text="'Autor: ' + ${playlist.owner.username}">Autor</span>
+                            <span th:text="${#lists.size(playlist.tracks)} + ' utworów'">0 utworów</span>
+                        </div>
+                    </div>
+                    <div class="playlist-actions">
+                        <div class="playlist-stats">
+                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
+                                👍 <span th:id="'likes-count-' + ${playlist.id}" th:text="${playlist.likesCount}">0</span>
+                            </button>
+                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and !playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
+                                👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

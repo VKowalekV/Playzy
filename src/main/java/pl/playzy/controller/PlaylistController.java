@@ -31,18 +31,39 @@ public class PlaylistController {
     }
 
     @GetMapping("/library")
-    public String library(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String libraryMyPlaylists(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        prepareLibraryModel(userDetails, model);
+        User owner = (User) model.getAttribute("owner");
+        model.addAttribute("activeTab", "my");
+        model.addAttribute("myPlaylists", playlistService.getUserPlaylists(owner));
+        return "library";
+    }
+
+    @GetMapping("/library/followed")
+    public String libraryFollowedPlaylists(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        prepareLibraryModel(userDetails, model);
+        User owner = (User) model.getAttribute("owner");
+        model.addAttribute("activeTab", "followed");
+        model.addAttribute("followedPlaylists", playlistService.getFollowedPlaylists(owner));
+        return "library";
+    }
+
+    @GetMapping("/library/collaborative")
+    public String libraryCollaborativePlaylists(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        prepareLibraryModel(userDetails, model);
+        User owner = (User) model.getAttribute("owner");
+        model.addAttribute("activeTab", "collaborative");
+        model.addAttribute("collaborativePlaylists", playlistService.getCoCreatedPlaylists(owner));
+        return "library";
+    }
+
+    private void prepareLibraryModel(UserDetails userDetails, Model model) {
         if (!model.containsAttribute("playlistCreateDto")) {
             model.addAttribute("playlistCreateDto", new PlaylistCreateDto());
         }
-
         User owner = userRepository.findByUsername(userDetails.getUsername().toLowerCase())
                 .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
-
-        model.addAttribute("myPlaylists", playlistService.getUserPlaylists(owner));
-        model.addAttribute("followedPlaylists", playlistService.getFollowedPlaylists(owner));
-
-        return "library";
+        model.addAttribute("owner", owner);
     }
 
     @PostMapping("/playlists/create")

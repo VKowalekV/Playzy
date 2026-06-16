@@ -49,6 +49,10 @@ public class PlaylistService {
         return playlistRepository.findByFollowersId(user.getId());
     }
 
+    public List<Playlist> getCoCreatedPlaylists(User user) {
+        return playlistRepository.findByCoCreatorsId(user.getId());
+    }
+
     public List<Playlist> getPublicPlaylists() {
         return playlistRepository.findByIsPublicTrueOrderByCreatedAtDesc();
     }
