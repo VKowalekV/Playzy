@@ -16,6 +16,7 @@
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/users}" class="nav-btn">Panel Admina</a>
             <a sec:authorize="!hasRole('ADMIN')" th:href="@{/playlists}" class="nav-btn">Publiczne Playlisty</a>
             <a sec:authorize="!hasRole('ADMIN')" th:href="@{/library}" class="nav-btn active-link">Biblioteka</a>
+            <a sec:authorize="hasRole('MODERATOR')" th:href="@{/moderator/playlists}" class="nav-btn">Panel Moderatora</a>
             <a th:href="@{/dashboard}" class="nav-btn">Mój Profil</a>
             <form th:action="@{/logout}" method="post">
                 <button type="submit" class="nav-btn primary">Wyloguj</button>

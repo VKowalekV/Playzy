@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Panel Admina - Playlisty</title>
+    <title th:text="${panelTitle} + ' - Playlisty'">Panel - Playlisty</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/library.css}">
     <link rel="stylesheet" th:href="@{/css/admin-panel.css}">
@@ -12,7 +12,9 @@
     <nav class="navbar">
         <a th:href="@{/}" class="logo">Playzy</a>
         <div class="nav-links">
-            <a th:href="@{/admin/users}" class="nav-btn active-link">Panel Admina</a>
+            <a sec:authorize="!hasRole('ADMIN')" th:href="@{/playlists}" class="nav-btn">Publiczne Playlisty</a>
+            <a sec:authorize="!hasRole('ADMIN')" th:href="@{/library}" class="nav-btn">Biblioteka</a>
+            <a th:href="${panelHomePath}" class="nav-btn active-link" th:text="${panelTitle}">Panel</a>
             <a th:href="@{/dashboard}" class="nav-btn">Mój Profil</a>
             <form th:action="@{/logout}" method="post">
                 <button type="submit" class="nav-btn primary">Wyloguj</button>
@@ -22,23 +24,23 @@
 
     <div class="container page-container admin-page-container">
         <div class="page-header">
-            <h2>Panel Admina</h2>
+            <h2 th:text="${panelTitle}">Panel</h2>
         </div>
 
         <div class="tabs-container">
-            <a th:href="@{/admin/users}" class="tab-btn">Użytkownicy</a>
-            <a th:href="@{/admin/playlists}" class="tab-btn active">Wszystkie Playlisty</a>
+            <a th:if="${showUsersTab}" th:href="${usersPath}" class="tab-btn">Użytkownicy</a>
+            <a th:href="${playlistsPath}" class="tab-btn active">Wszystkie Playlisty</a>
         </div>
 
-        <form th:action="@{/admin/playlists}" method="get" class="admin-search-form">
+        <form th:action="${playlistsPath}" method="get" class="admin-search-form">
             <input type="text" name="q" placeholder="Szukaj po nazwie playlisty" th:value="${searchQuery}">
-            <button type="submit" class="btn-outline">Szukaj</button>
-            <a th:if="${searchQuery != null and !searchQuery.isBlank()}" th:href="@{/admin/playlists}" class="btn-outline admin-link-btn">Wyczyść</a>
+            <button type="submit" class="btn-outline active">Szukaj</button>
+            <a th:if="${searchQuery != null and !searchQuery.isBlank()}" th:href="${playlistsPath}" class="btn-outline admin-link-btn">Wyczyść</a>
         </form>
 
         <p class="empty-state" th:if="${#lists.isEmpty(allPlaylists)}">Brak playlist do wyświetlenia.</p>
         <div class="playlists-container" th:unless="${#lists.isEmpty(allPlaylists)}">
-            <div class="playlist-card" th:each="playlist : ${allPlaylists}">
+            <div class="playlist-card" th:each="playlist : ${allPlaylists}" th:onclick="'goToPlaylist(event, ' + ${playlist.id} + ')'">
                 <div class="playlist-img-placeholder">🎵</div>
                 <div class="playlist-info">
                     <div class="playlist-title-row">
@@ -55,12 +57,13 @@
                         <span class="btn-icon admin-static-stat">👍 <span th:text="${playlist.likesCount}">0</span></span>
                         <span class="btn-icon admin-static-stat">👎 <span th:text="${playlist.dislikesCount}">0</span></span>
                     </div>
-                    <form th:action="@{/admin/playlists/{id}/delete(id=${playlist.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tę playlistę?');">
+                    <form th:action="${playlistDeletePathPrefix + playlist.id + '/delete'}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tę playlistę?');">
                         <button type="submit" class="btn-delete">🗑️ Usuń</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <script th:src="@{/js/playlists.js}"></script>
 </body>
 </html>

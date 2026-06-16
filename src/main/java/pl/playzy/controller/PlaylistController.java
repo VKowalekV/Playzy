@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pl.playzy.dto.PlaylistCreateDto;
 import pl.playzy.model.Playlist;
+import pl.playzy.model.Role;
 import pl.playzy.model.User;
 import pl.playzy.repository.UserRepository;
 import pl.playzy.service.PlaylistService;
@@ -149,12 +150,11 @@ public class PlaylistController {
         if (userDetails != null) {
             User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
             if (user != null) {
-                boolean isAdmin = user.getRole() == pl.playzy.model.Role.ADMIN;
-                if (isAdmin || playlist.getOwner().getId().equals(user.getId())
-                        || playlist.getCoCreators().contains(user)) {
+                boolean canModerate = user.getRole() == Role.ADMIN || user.getRole() == Role.MODERATOR;
+                if (canModerate || playlist.getOwner().getId().equals(user.getId()) || playlist.getCoCreators().contains(user)) {
                     canEdit = true;
                 }
-                if (isAdmin || playlist.getOwner().getId().equals(user.getId())) {
+                if (canModerate || playlist.getOwner().getId().equals(user.getId())) {
                     isOwner = true;
                 }
             }
@@ -227,6 +227,12 @@ public class PlaylistController {
             User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
             if (user != null) {
                 playlistService.deletePlaylist(id, user);
+                if (user.getRole() == Role.ADMIN) {
+                    return "redirect:/admin/playlists";
+                }
+                if (user.getRole() == Role.MODERATOR) {
+                    return "redirect:/moderator/playlists";
+                }
             }
         }
         return "redirect:/library";

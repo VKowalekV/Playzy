@@ -19,6 +19,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/register", "/login", "/css/**", "/playlists", "/api/playlists/top")
                         .permitAll()
                         .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/moderator", "/moderator/**").hasRole("MODERATOR")
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response,

@@ -34,7 +34,7 @@
 
         <form th:action="@{/admin/users}" method="get" class="admin-search-form">
             <input type="text" name="q" placeholder="Szukaj po nazwie użytkownika" th:value="${searchQuery}">
-            <button type="submit" class="btn-outline">Szukaj</button>
+            <button type="submit" class="btn-outline active">Szukaj</button>
             <a th:if="${searchQuery != null and !searchQuery.isBlank()}" th:href="@{/admin/users}" class="btn-outline admin-link-btn">Wyczyść</a>
         </form>
 
@@ -52,9 +52,12 @@
                     </div>
                 </div>
                 <div class="playlist-actions" th:if="${user.role.name() != 'ADMIN'}">
-                    <form th:if="${user.role.name() == 'USER' or user.role.name() == 'MODERATOR'}" th:action="@{/admin/users/{id}/toggle-moderator(id=${user.id})}" method="post">
-                        <button type="submit" class="btn-outline admin-role-btn" th:classappend="${user.role.name() == 'USER'} ? 'active' : ''" th:text="${user.role.name() == 'USER' ? 'Nadaj rolę moderatora' : 'Usuń rolę moderatora'}">Nadaj rolę moderatora</button>
-                    </form>
+                    <button type="button" class="nav-btn admin-edit-btn"
+                            th:data-user-id="${user.id}"
+                            th:data-username="${user.username}"
+                            th:data-email="${user.email}"
+                            th:data-role="${user.role.name()}"
+                            onclick="openEditUserModal(this)">✏️ Edytuj</button>
                     <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tego użytkownika?');">
                         <button type="submit" class="btn-delete" th:disabled="${currentUser != null and user.id == currentUser.id}">🗑️ Usuń</button>
                     </form>
@@ -62,5 +65,73 @@
             </div>
         </div>
     </div>
+
+    <div id="editUserModal" class="modal" th:classappend="${editUserModalOpen} ? 'show' : ''">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditUserModal()">&times;</span>
+            <h3 class="modal-form-title">Edytuj użytkownika</h3>
+            <div class="alert alert-error" th:if="${editUserError}" th:text="${editUserError}">Błąd</div>
+            <form id="editUserForm" method="post" th:action="${editUserId != null ? '/admin/users/' + editUserId + '/update' : '#'}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="form-group">
+                    <label for="editUsername">Nazwa użytkownika</label>
+                    <input type="text" id="editUsername" name="username" minlength="3" maxlength="50" pattern="^[a-zA-Z0-9_-]+$" th:value="${editUsername}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input type="email" id="editEmail" name="email" pattern="^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,20}$" th:value="${editEmail}" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="hidden" id="editModerator" name="moderator" th:value="${editModerator == true} ? 'true' : 'false'">
+                    <button type="button" id="editModeratorButton" class="btn-outline admin-modal-role-btn" th:classappend="${editModerator == true} ? '' : 'active'" th:text="${editModerator == true} ? 'Usuń rolę moderatora' : 'Nadaj rolę moderatora'" onclick="toggleEditModerator()">Nadaj rolę moderatora</button>
+                </div>
+
+                <button type="submit" class="modal-submit-btn">Zapisz zmiany</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openEditUserModal(button) {
+            const modal = document.getElementById('editUserModal');
+            const form = document.getElementById('editUserForm');
+            const moderatorInput = document.getElementById('editModerator');
+            const moderatorButton = document.getElementById('editModeratorButton');
+
+            form.action = `/admin/users/${button.dataset.userId}/update`;
+            document.getElementById('editUsername').value = button.dataset.username;
+            document.getElementById('editEmail').value = button.dataset.email;
+
+            const isModerator = button.dataset.role === 'MODERATOR';
+            moderatorInput.value = isModerator ? 'true' : 'false';
+            moderatorButton.classList.toggle('active', !isModerator);
+            moderatorButton.innerText = isModerator ? 'Usuń rolę moderatora' : 'Nadaj rolę moderatora';
+
+            modal.classList.add('show');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.remove('show');
+        }
+
+        function toggleEditModerator() {
+            const moderatorInput = document.getElementById('editModerator');
+            const moderatorButton = document.getElementById('editModeratorButton');
+            const isModerator = moderatorInput.value === 'true';
+
+            moderatorInput.value = isModerator ? 'false' : 'true';
+            moderatorButton.classList.toggle('active', isModerator);
+            moderatorButton.innerText = isModerator ? 'Nadaj rolę moderatora' : 'Usuń rolę moderatora';
+        }
+
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('editUserModal');
+            if (event.target === modal) {
+                closeEditUserModal();
+            }
+        });
+    </script>
 </body>
 </html>

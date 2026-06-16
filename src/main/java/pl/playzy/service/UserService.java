@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.playzy.dto.AdminUserUpdateDto;
 import pl.playzy.dto.UserRegistrationDto;
 import pl.playzy.model.Role;
 import pl.playzy.model.User;
@@ -63,8 +64,8 @@ public class UserService {
 
     @Transactional
     public User updateUsername(User currentUser, String username) {
-        String usernameLower = username.toLowerCase();
-        if (!currentUser.getUsername().equals(usernameLower) && userRepository.existsByUsername(usernameLower)) {
+        String usernameLower = username.trim().toLowerCase();
+        if (userRepository.existsByUsernameIgnoreCaseAndIdNot(usernameLower, currentUser.getId())) {
             throw new IllegalArgumentException("Nazwa użytkownika jest już zajęta");
         }
 
@@ -74,13 +75,38 @@ public class UserService {
 
     @Transactional
     public User updateEmail(User currentUser, String email) {
-        String emailLower = email.toLowerCase();
-        if (!currentUser.getEmail().equals(emailLower) && userRepository.existsByEmail(emailLower)) {
+        String emailLower = email.trim().toLowerCase();
+        if (userRepository.existsByEmailIgnoreCaseAndIdNot(emailLower, currentUser.getId())) {
             throw new IllegalArgumentException("Adres e-mail jest już zajęty");
         }
 
         currentUser.setEmail(emailLower);
         return userRepository.save(currentUser);
+    }
+
+    @Transactional
+    public boolean updateUserAsAdmin(Long userId, AdminUserUpdateDto dto) {
+        return userRepository.findById(userId).map(user -> {
+            if (user.getRole() == Role.ADMIN) {
+                return false;
+            }
+
+            String usernameLower = dto.getUsername().trim().toLowerCase();
+            String emailLower = dto.getEmail().trim().toLowerCase();
+
+            if (userRepository.existsByUsernameIgnoreCaseAndIdNot(usernameLower, user.getId())) {
+                throw new IllegalArgumentException("Nazwa użytkownika jest już zajęta");
+            }
+            if (userRepository.existsByEmailIgnoreCaseAndIdNot(emailLower, user.getId())) {
+                throw new IllegalArgumentException("Adres e-mail jest już zajęty");
+            }
+
+            user.setUsername(usernameLower);
+            user.setEmail(emailLower);
+            user.setRole(dto.isModerator() ? Role.MODERATOR : Role.USER);
+            userRepository.save(user);
+            return true;
+        }).orElse(false);
     }
 
     @Transactional
@@ -101,20 +127,6 @@ public class UserService {
 
         removeUserRelations(currentUser.getId());
         userRepository.delete(currentUser);
-    }
-
-    @Transactional
-    public boolean toggleModeratorRole(Long userId) {
-        return userRepository.findById(userId).map(user -> {
-            if (user.getRole() == Role.USER) {
-                user.setRole(Role.MODERATOR);
-                userRepository.save(user);
-            } else if (user.getRole() == Role.MODERATOR) {
-                user.setRole(Role.USER);
-                userRepository.save(user);
-            }
-            return true;
-        }).orElse(false);
     }
 
     @Transactional
