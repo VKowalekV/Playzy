@@ -56,7 +56,7 @@
                         <span class="btn-icon admin-static-stat">👎 <span th:text="${playlist.dislikesCount}">0</span></span>
                     </div>
                     <form th:action="@{/admin/playlists/{id}/delete(id=${playlist.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tę playlistę?');">
-                        <button type="submit" class="btn-delete">Usuń</button>
+                        <button type="submit" class="btn-delete">🗑️ Usuń</button>
                     </form>
                 </div>
             </div>

@@ -56,7 +56,7 @@
                         <button type="submit" class="btn-outline admin-role-btn" th:classappend="${user.role.name() == 'USER'} ? 'active' : ''" th:text="${user.role.name() == 'USER' ? 'Nadaj rolę moderatora' : 'Usuń rolę moderatora'}">Nadaj rolę moderatora</button>
                     </form>
                     <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tego użytkownika?');">
-                        <button type="submit" class="btn-delete" th:disabled="${currentUser != null and user.id == currentUser.id}">Usuń</button>
+                        <button type="submit" class="btn-delete" th:disabled="${currentUser != null and user.id == currentUser.id}">🗑️ Usuń</button>
                     </form>
                 </div>
             </div>
