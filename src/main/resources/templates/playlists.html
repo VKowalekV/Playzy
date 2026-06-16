@@ -31,6 +31,7 @@
     </nav>
 
     <div class="container page-container">
+        <div class="alert alert-error" th:if="${errorMessage}" th:text="${errorMessage}">Błąd</div>
         <h2>Publiczne Playlisty</h2>
 
         <form th:action="@{/playlists}" method="get" class="filter-bar" id="filterForm">

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Błąd - Playzy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="'Błąd ' + ${status ?: ''}">Błąd</h1>
+        
+        <th:block th:if="${status == 404}">
+            <div class="alert alert-error">Strona nie znaleziona</div>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Link jest nieprawidłowy lub strona, której szukasz, została usunięta, przeniesiona lub po prostu nie istnieje.</p>
+        </th:block>
+        
+        <th:block th:if="${status == 403}">
+            <div class="alert alert-error">Brak dostępu</div>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Nie masz uprawnień, aby przeglądać tę stronę.</p>
+        </th:block>
+        
+        <th:block th:if="${status != 404 and status != 403}">
+            <div class="alert alert-error">Wystąpił błąd</div>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;" th:text="${error ?: 'Przepraszamy, ale coś poszło nie tak po stronie serwera. Spróbuj ponownie później.'}">Przepraszamy, coś poszło nie tak.</p>
+        </th:block>
+
+        <div class="links">
+            <p><a th:href="@{/}">Wróć na stronę główną</a></p>
+        </div>
+    </div>
+</body>
+</html>

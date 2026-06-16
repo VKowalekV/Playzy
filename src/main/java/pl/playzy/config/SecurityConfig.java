@@ -2,6 +2,7 @@ package pl.playzy.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,8 +17,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/register", "/login", "/css/**", "/playlists", "/api/playlists/top")
+                        .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/playlists",
+                                "/api/playlists/top", "/error")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/playlists/*").permitAll()
                         .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                         .requestMatchers("/moderator", "/moderator/**").hasRole("MODERATOR")
                         .anyRequest().authenticated())

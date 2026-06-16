@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Optional;
 import pl.playzy.dto.PlaylistCreateDto;
 import pl.playzy.model.Playlist;
 import pl.playzy.model.Role;
@@ -139,9 +140,13 @@ public class PlaylistController {
 
     @GetMapping("/playlists/{id}")
     public String playlistDetails(@PathVariable Long id, Model model,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        Playlist playlist = playlistService.getPlaylistById(id)
-                .orElseThrow(() -> new RuntimeException("Playlist not found"));
+            @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+        Optional<Playlist> optionalPlaylist = playlistService.getPlaylistById(id);
+        if (optionalPlaylist.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Taka playlista nie istnieje.");
+            return "redirect:/playlists";
+        }
+        Playlist playlist = optionalPlaylist.get();
 
         model.addAttribute("playlist", playlist);
 
@@ -151,7 +156,8 @@ public class PlaylistController {
             User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
             if (user != null) {
                 boolean canModerate = user.getRole() == Role.ADMIN || user.getRole() == Role.MODERATOR;
-                if (canModerate || playlist.getOwner().getId().equals(user.getId()) || playlist.getCoCreators().contains(user)) {
+                if (canModerate || playlist.getOwner().getId().equals(user.getId())
+                        || playlist.getCoCreators().contains(user)) {
                     canEdit = true;
                 }
                 if (canModerate || playlist.getOwner().getId().equals(user.getId())) {
@@ -161,6 +167,11 @@ public class PlaylistController {
         }
         model.addAttribute("canEdit", canEdit);
         model.addAttribute("isOwner", isOwner);
+
+        if (!playlist.isPublic() && !canEdit) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Ta playlista jest prywatna. Brak dostępu.");
+            return "redirect:/playlists";
+        }
 
         if (!model.containsAttribute("playlistUpdateDto")) {
             PlaylistCreateDto dto = new PlaylistCreateDto();
