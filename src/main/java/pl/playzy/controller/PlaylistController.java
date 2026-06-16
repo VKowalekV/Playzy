@@ -1,5 +1,7 @@
 package pl.playzy.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -7,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,8 +31,52 @@ public class PlaylistController {
     private final UserRepository userRepository;
 
     @GetMapping("/playlists")
-    public String publicPlaylists(Model model) {
-        model.addAttribute("publicPlaylists", playlistService.getPublicPlaylists());
+    public String publicPlaylists(
+            @RequestParam(required = false) String sortField,
+            @RequestParam(required = false) String sortDir,
+            @RequestParam(required = false) String dateFilter,
+            @RequestParam(required = false) String ownerUsername,
+            @CookieValue(value = "pl_sortField", defaultValue = "createdAt") String cookieSortField,
+            @CookieValue(value = "pl_sortDir", defaultValue = "desc") String cookieSortDir,
+            @CookieValue(value = "pl_dateFilter", defaultValue = "all") String cookieDateFilter,
+            @CookieValue(value = "pl_ownerUsername", required = false) String cookieOwnerUsername,
+            HttpServletResponse response,
+            Model model) {
+
+        String finalSortField = sortField != null ? sortField : cookieSortField;
+        String finalSortDir = sortDir != null ? sortDir : cookieSortDir;
+        String finalDateFilter = dateFilter != null ? dateFilter : cookieDateFilter;
+        String finalOwnerUsername = ownerUsername != null ? ownerUsername : cookieOwnerUsername;
+
+        int maxAge = 30 * 24 * 60 * 60;
+        Cookie cSortField = new Cookie("pl_sortField", finalSortField);
+        cSortField.setPath("/");
+        cSortField.setMaxAge(maxAge);
+        response.addCookie(cSortField);
+
+        Cookie cSortDir = new Cookie("pl_sortDir", finalSortDir);
+        cSortDir.setPath("/");
+        cSortDir.setMaxAge(maxAge);
+        response.addCookie(cSortDir);
+
+        Cookie cDateFilter = new Cookie("pl_dateFilter", finalDateFilter);
+        cDateFilter.setPath("/");
+        cDateFilter.setMaxAge(maxAge);
+        response.addCookie(cDateFilter);
+
+        Cookie cOwnerUsername = new Cookie("pl_ownerUsername",
+                finalOwnerUsername != null ? finalOwnerUsername : "");
+        cOwnerUsername.setPath("/");
+        cOwnerUsername.setMaxAge(maxAge);
+        response.addCookie(cOwnerUsername);
+
+        model.addAttribute("publicPlaylists", playlistService.getPublicPlaylistsFiltered(finalSortField, finalSortDir,
+                finalDateFilter, finalOwnerUsername));
+        model.addAttribute("sortField", finalSortField);
+        model.addAttribute("sortDir", finalSortDir);
+        model.addAttribute("dateFilter", finalDateFilter);
+        model.addAttribute("ownerUsername", finalOwnerUsername);
+
         return "playlists";
     }
 
@@ -75,8 +122,8 @@ public class PlaylistController {
             @AuthenticationPrincipal UserDetails userDetails,
             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.playlistCreateDto",
-                    bindingResult);
+            String key = BindingResult.class.getName() + ".playlistCreateDto";
+            redirectAttributes.addFlashAttribute(key, bindingResult);
             redirectAttributes.addFlashAttribute("playlistCreateDto", dto);
             redirectAttributes.addFlashAttribute("showCreateModal", true);
             return "redirect:/library";
@@ -103,7 +150,8 @@ public class PlaylistController {
             User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
             if (user != null) {
                 boolean isAdmin = user.getRole() == pl.playzy.model.Role.ADMIN;
-                if (isAdmin || playlist.getOwner().getId().equals(user.getId()) || playlist.getCoCreators().contains(user)) {
+                if (isAdmin || playlist.getOwner().getId().equals(user.getId())
+                        || playlist.getCoCreators().contains(user)) {
                     canEdit = true;
                 }
                 if (isAdmin || playlist.getOwner().getId().equals(user.getId())) {
@@ -131,8 +179,8 @@ public class PlaylistController {
             @AuthenticationPrincipal UserDetails userDetails,
             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.playlistUpdateDto",
-                    bindingResult);
+            String key = BindingResult.class.getName() + ".playlistUpdateDto";
+            redirectAttributes.addFlashAttribute(key, bindingResult);
             redirectAttributes.addFlashAttribute("playlistUpdateDto", dto);
             redirectAttributes.addFlashAttribute("showEditModal", true);
             return "redirect:/playlists/" + id;

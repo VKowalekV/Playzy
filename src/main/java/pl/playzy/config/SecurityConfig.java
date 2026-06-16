@@ -12,31 +12,30 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                http
-                                .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/", "/register", "/login", "/css/**", "/playlists",
-                                                                "/api/playlists/top")
-                                                .permitAll()
-                                                .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
-                                                .anyRequest().authenticated())
-                                .exceptionHandling(exception -> exception
-                                                .accessDeniedHandler((request, response,
-                                                                accessDeniedException) -> response.sendRedirect("/")))
-                                .formLogin(form -> form
-                                                .loginPage("/login")
-                                                .defaultSuccessUrl("/", true)
-                                                .permitAll())
-                                .logout(logout -> logout
-                                                .logoutSuccessUrl("/")
-                                                .permitAll());
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/register", "/login", "/css/**", "/playlists", "/api/playlists/top")
+                        .permitAll()
+                        .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response,
+                                accessDeniedException) -> response.sendRedirect("/")))
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/")
+                        .permitAll());
 
-                return http.build();
-        }
+        return http.build();
+    }
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

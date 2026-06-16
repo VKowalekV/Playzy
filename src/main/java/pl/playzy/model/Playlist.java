@@ -1,7 +1,6 @@
 package pl.playzy.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
 import org.hibernate.annotations.Formula;
@@ -37,6 +36,9 @@ public class Playlist {
 
     @Formula("(SELECT COUNT(r.id) FROM playlist_ratings r WHERE r.playlist_id = id AND r.is_like = false)")
     private int dislikesCount;
+
+    @Formula("(SELECT COUNT(f.user_id) FROM playlist_followers f WHERE f.playlist_id = id)")
+    private int followersCount;
 
     public Boolean getUserRating(User user) {
         if (user == null || ratings == null)

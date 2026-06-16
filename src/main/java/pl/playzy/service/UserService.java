@@ -57,6 +57,10 @@ public class UserService {
         return userRepository.findByUsernameContainingIgnoreCaseOrderByJoinDateDesc(query.trim());
     }
 
+    public List<User> getAuthorsByPopularity() {
+        return userRepository.findAuthorsByPopularity();
+    }
+
     @Transactional
     public User updateUsername(User currentUser, String username) {
         String usernameLower = username.toLowerCase();

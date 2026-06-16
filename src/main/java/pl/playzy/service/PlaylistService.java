@@ -1,6 +1,8 @@
 package pl.playzy.service;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.playzy.dto.PlaylistCreateDto;
@@ -99,6 +101,40 @@ public class PlaylistService {
 
     public List<Playlist> getPublicPlaylists() {
         return playlistRepository.findByIsPublicTrueOrderByCreatedAtDesc();
+    }
+
+    public List<Playlist> getPublicPlaylistsFiltered(String sortField, String sortDir, String dateFilter,
+            String ownerUsername) {
+        String finalSortField = "createdAt";
+        if ("likesCount".equals(sortField) || "dislikesCount".equals(sortField) || "followersCount".equals(sortField)) {
+            finalSortField = sortField;
+        }
+
+        Sort sort = Sort.by(
+                "asc".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC
+                        : Sort.Direction.DESC,
+                finalSortField);
+
+        LocalDateTime dateFrom = null;
+        if (dateFilter != null) {
+            switch (dateFilter) {
+                case "day":
+                    dateFrom = LocalDateTime.now().minusDays(1);
+                    break;
+                case "week":
+                    dateFrom = LocalDateTime.now().minusWeeks(1);
+                    break;
+                case "month":
+                    dateFrom = LocalDateTime.now().minusMonths(1);
+                    break;
+            }
+        }
+
+        boolean hasDateFilter = dateFrom != null;
+        boolean hasOwnerFilter = ownerUsername != null && !ownerUsername.trim().isEmpty();
+
+        return playlistRepository.findPublicPlaylistsWithFilters(hasDateFilter, dateFrom, hasOwnerFilter, ownerUsername,
+                sort);
     }
 
     public List<Playlist> getAllPlaylists() {

@@ -6,6 +6,7 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/playlists.css}">
     <link rel="stylesheet" th:href="@{/css/playlist-card.css}">
 </head>
 <body>
@@ -30,6 +31,42 @@
 
     <div class="container page-container">
         <h2>Publiczne Playlisty</h2>
+
+        <form th:action="@{/playlists}" method="get" class="filter-bar" id="filterForm">
+            <div class="filter-group">
+                <label for="sortField">Sortuj według</label>
+                <select name="sortField" id="sortField" onchange="document.getElementById('filterForm').submit();">
+                    <option value="createdAt" th:selected="${sortField == 'createdAt'}">Data dodania</option>
+                    <option value="likesCount" th:selected="${sortField == 'likesCount'}">Liczba polubień</option>
+                    <option value="dislikesCount" th:selected="${sortField == 'dislikesCount'}">Liczba dislików</option>
+                    <option value="followersCount" th:selected="${sortField == 'followersCount'}">Liczba obserwujących</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="sortDir">Kierunek</label>
+                <select name="sortDir" id="sortDir" onchange="document.getElementById('filterForm').submit();">
+                    <option value="desc" th:selected="${sortDir == 'desc'}">Malejąco</option>
+                    <option value="asc" th:selected="${sortDir == 'asc'}">Rosnąco</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="dateFilter">Czas</label>
+                <select name="dateFilter" id="dateFilter" onchange="document.getElementById('filterForm').submit();">
+                    <option value="all" th:selected="${dateFilter == 'all'}">Wszystko</option>
+                    <option value="day" th:selected="${dateFilter == 'day'}">Ostatnie 24h</option>
+                    <option value="week" th:selected="${dateFilter == 'week'}">Ostatni tydzień</option>
+                    <option value="month" th:selected="${dateFilter == 'month'}">Ostatni miesiąc</option>
+                </select>
+            </div>
+            <div class="filter-group filter-author">
+                <label for="ownerUsername">Autor</label>
+                <div class="filter-search">
+                    <input type="text" name="ownerUsername" id="ownerUsername" th:value="${ownerUsername}" placeholder="Nazwa użytkownika...">
+                    <button class="nav-btn primary" type="submit">Filtruj</button>
+                </div>
+            </div>
+        </form>
+
         <p class="empty-state" th:if="${#lists.isEmpty(publicPlaylists)}">Brak publicznych playlist do wyświetlenia.</p>
         <div class="playlists-container" th:unless="${#lists.isEmpty(publicPlaylists)}">
             <div class="playlist-card" th:each="playlist : ${publicPlaylists}" th:onclick="'goToPlaylist(event, ' + ${playlist.id} + ')'">
