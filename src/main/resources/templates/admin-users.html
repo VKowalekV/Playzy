@@ -56,6 +56,7 @@
                             th:data-user-id="${user.id}"
                             th:data-username="${user.username}"
                             th:data-email="${user.email}"
+                            th:data-date-of-birth="${user.dateOfBirth}"
                             th:data-role="${user.role.name()}"
                             onclick="openEditUserModal(this)">✏️ Edytuj</button>
                     <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć tego użytkownika?');">
@@ -84,6 +85,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="editDateOfBirth">Data urodzenia</label>
+                    <input type="date" id="editDateOfBirth" name="dateOfBirth" th:value="${editDateOfBirth}" required>
+                </div>
+
+                <div class="form-group">
                     <input type="hidden" id="editModerator" name="moderator" th:value="${editModerator == true} ? 'true' : 'false'">
                     <button type="button" id="editModeratorButton" class="btn-outline admin-modal-role-btn" th:classappend="${editModerator == true} ? '' : 'active'" th:text="${editModerator == true} ? 'Usuń rolę moderatora' : 'Nadaj rolę moderatora'" onclick="toggleEditModerator()">Nadaj rolę moderatora</button>
                 </div>
@@ -103,6 +109,7 @@
             form.action = `/admin/users/${button.dataset.userId}/update`;
             document.getElementById('editUsername').value = button.dataset.username;
             document.getElementById('editEmail').value = button.dataset.email;
+            document.getElementById('editDateOfBirth').value = button.dataset.dateOfBirth;
 
             const isModerator = button.dataset.role === 'MODERATOR';
             moderatorInput.value = isModerator ? 'true' : 'false';

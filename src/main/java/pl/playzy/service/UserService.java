@@ -41,6 +41,7 @@ public class UserService {
                 .email(emailLower)
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .joinDate(LocalDateTime.now())
+                .dateOfBirth(dto.getDateOfBirth())
                 .role(Role.USER)
                 .build();
 
@@ -99,6 +100,7 @@ public class UserService {
 
             user.setUsername(usernameLower);
             user.setEmail(emailLower);
+            user.setDateOfBirth(dto.getDateOfBirth());
             user.setRole(dto.isModerator() ? Role.MODERATOR : Role.USER);
             userRepository.save(user);
             return true;

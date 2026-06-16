@@ -115,6 +115,7 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("editUserId", id);
         redirectAttributes.addFlashAttribute("editUsername", dto.getUsername());
         redirectAttributes.addFlashAttribute("editEmail", dto.getEmail());
+        redirectAttributes.addFlashAttribute("editDateOfBirth", dto.getDateOfBirth());
         redirectAttributes.addFlashAttribute("editModerator", dto.isModerator());
     }
 }

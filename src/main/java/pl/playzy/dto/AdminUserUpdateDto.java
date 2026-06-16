@@ -2,9 +2,13 @@ package pl.playzy.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
 
 @Data
 public class AdminUserUpdateDto {
@@ -18,6 +22,11 @@ public class AdminUserUpdateDto {
     @Email(message = "Nieprawidłowy format email")
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,20}$", message = "Adres email musi posiadać poprawną domenę (np. .com, .pl)")
     private String email;
+
+    @NotNull(message = "Data urodzenia jest wymagana")
+    @Past(message = "Data urodzenia musi znajdować się w przeszłości")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
 
     private boolean moderator;
 }
