@@ -11,6 +11,7 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequest;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,13 +36,19 @@ public class SpotifyService {
                 .build();
     }
 
-    private void ensureToken() {
-        try {
-            ClientCredentialsRequest request = spotifyApi.clientCredentials().build();
-            ClientCredentials credentials = request.execute();
-            spotifyApi.setAccessToken(credentials.getAccessToken());
-        } catch (Exception e) {
-            e.printStackTrace();
+    private LocalDateTime tokenExpiry;
+
+    private synchronized void ensureToken() {
+        if (tokenExpiry == null || LocalDateTime.now().isAfter(tokenExpiry)) {
+            try {
+                ClientCredentialsRequest request = spotifyApi.clientCredentials().build();
+                ClientCredentials credentials = request.execute();
+                spotifyApi.setAccessToken(credentials.getAccessToken());
+                // Token ważny przez 1 godzinę, dajemy bufor 60 sekund
+                tokenExpiry = LocalDateTime.now().plusSeconds(credentials.getExpiresIn() - 60);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
