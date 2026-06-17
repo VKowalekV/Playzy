@@ -155,12 +155,15 @@ public class PlaylistService {
 
     @Transactional
     public void deletePlaylist(Long id, User currentUser) {
-        playlistRepository.findById(id).ifPresent(playlist -> {
-            boolean isStaff = canModeratePlaylists(currentUser);
-            if (isStaff || playlist.getOwner().getId().equals(currentUser.getId())) {
-                playlistRepository.delete(playlist);
-            }
-        });
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono playlisty"));
+
+        boolean isStaff = canModeratePlaylists(currentUser);
+        if (!isStaff && !playlist.getOwner().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Nie masz uprawnień by usunąć tę playlistę");
+        }
+
+        playlistRepository.delete(playlist);
     }
 
     @Transactional
