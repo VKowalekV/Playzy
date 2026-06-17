@@ -92,6 +92,25 @@ public class DashboardController {
         return "redirect:/dashboard";
     }
 
+    @PostMapping("/dashboard/date-of-birth")
+    public String updateDateOfBirth(@Valid @ModelAttribute("dateOfBirthUpdateDto") DateOfBirthUpdateDto dto,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        User currentUser = getCurrentUser(userDetails)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika"));
+
+        if (bindingResult.hasErrors()) {
+            addDashboardAttributes(model, currentUser);
+            return "dashboard";
+        }
+
+        userService.updateDateOfBirth(currentUser, dto.getDateOfBirth());
+        redirectAttributes.addFlashAttribute("successMessage", "Data urodzenia została zmieniona.");
+        return "redirect:/dashboard";
+    }
+
     @PostMapping("/dashboard/password")
     public String changePassword(@Valid @ModelAttribute("passwordChangeDto") PasswordChangeDto dto,
             BindingResult bindingResult,
@@ -166,6 +185,11 @@ public class DashboardController {
             EmailUpdateDto emailUpdateDto = new EmailUpdateDto();
             emailUpdateDto.setEmail(user.getEmail());
             model.addAttribute("emailUpdateDto", emailUpdateDto);
+        }
+        if (!model.containsAttribute("dateOfBirthUpdateDto")) {
+            DateOfBirthUpdateDto dateOfBirthUpdateDto = new DateOfBirthUpdateDto();
+            dateOfBirthUpdateDto.setDateOfBirth(user.getDateOfBirth());
+            model.addAttribute("dateOfBirthUpdateDto", dateOfBirthUpdateDto);
         }
         if (!model.containsAttribute("passwordChangeDto")) {
             model.addAttribute("passwordChangeDto", new PasswordChangeDto());

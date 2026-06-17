@@ -31,6 +31,7 @@
                 <h3>Dane konta</h3>
                 <p><strong>Nazwa użytkownika:</strong> <span th:text="${currentUser.username}"></span></p>
                 <p><strong>Email:</strong> <span th:text="${currentUser.email}"></span></p>
+                <p><strong>Data urodzenia:</strong> <span th:text="${currentUser.dateOfBirth}"></span></p>
                 <p><strong>Data dołączenia:</strong> <span th:text="${#temporals.format(currentUser.joinDate, 'dd-MM-yyyy HH:mm')}"></span></p>
             </div>
 
@@ -55,6 +56,18 @@
                         <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Błąd emaila</span>
                     </div>
                     <button type="submit" class="btn-outline active profile-submit-btn">Zapisz email</button>
+                </form>
+            </div>
+
+            <div class="user-info profile-section">
+                <h3>Zmień datę urodzenia</h3>
+                <form th:action="@{/dashboard/date-of-birth}" th:object="${dateOfBirthUpdateDto}" method="post">
+                    <div class="form-group">
+                        <label for="dateOfBirth">Nowa data urodzenia</label>
+                        <input type="date" id="dateOfBirth" th:field="*{dateOfBirth}" required>
+                        <span class="error" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}">Błąd daty urodzenia</span>
+                    </div>
+                    <button type="submit" class="btn-outline active profile-submit-btn">Zapisz datę</button>
                 </form>
             </div>
 

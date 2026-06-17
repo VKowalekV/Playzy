@@ -12,6 +12,7 @@ import pl.playzy.repository.PlaylistRatingRepository;
 import pl.playzy.repository.PlaylistRepository;
 import pl.playzy.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -78,6 +79,12 @@ public class UserService {
         }
 
         currentUser.setEmail(emailLower);
+        return userRepository.save(currentUser);
+    }
+
+    @Transactional
+    public User updateDateOfBirth(User currentUser, LocalDate dateOfBirth) {
+        currentUser.setDateOfBirth(dateOfBirth);
         return userRepository.save(currentUser);
     }
 
