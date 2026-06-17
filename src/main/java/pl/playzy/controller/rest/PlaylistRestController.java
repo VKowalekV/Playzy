@@ -139,7 +139,7 @@ public class PlaylistRestController {
         }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("followed", updatedPlaylist.isFollowedBy(user));
+        response.put("followed", playlistService.isPlaylistFollowedByUser(id, user));
 
         return ResponseEntity.ok(response);
     }
@@ -167,7 +167,7 @@ public class PlaylistRestController {
         Map<String, Object> response = new HashMap<>();
         response.put("likesCount", updatedPlaylist.getLikesCount());
         response.put("dislikesCount", updatedPlaylist.getDislikesCount());
-        response.put("userRating", updatedPlaylist.getUserRating(user));
+        response.put("userRating", playlistService.getUserRatingForPlaylist(id, user));
 
         return ResponseEntity.ok(response);
     }

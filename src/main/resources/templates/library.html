@@ -52,10 +52,10 @@
                     </div>
                     <div class="playlist-actions">
                         <div class="playlist-stats">
-                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
+                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${@playlistService.getUserRatingForPlaylist(playlist.id, currentUser) != null and @playlistService.getUserRatingForPlaylist(playlist.id, currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
                                 👍 <span th:id="'likes-count-' + ${playlist.id}" th:text="${playlist.likesCount}">0</span>
                             </button>
-                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and !playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
+                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${@playlistService.getUserRatingForPlaylist(playlist.id, currentUser) != null and !@playlistService.getUserRatingForPlaylist(playlist.id, currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
                                 👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span>
                             </button>
                         </div>
@@ -84,10 +84,10 @@
                     </div>
                     <div class="playlist-actions">
                         <div class="playlist-stats">
-                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
+                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${@playlistService.getUserRatingForPlaylist(playlist.id, currentUser) != null and @playlistService.getUserRatingForPlaylist(playlist.id, currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
                                 👍 <span th:id="'likes-count-' + ${playlist.id}" th:text="${playlist.likesCount}">0</span>
                             </button>
-                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and !playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
+                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${@playlistService.getUserRatingForPlaylist(playlist.id, currentUser) != null and !@playlistService.getUserRatingForPlaylist(playlist.id, currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
                                 👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span>
                             </button>
                         </div>
@@ -114,10 +114,10 @@
                     </div>
                     <div class="playlist-actions">
                         <div class="playlist-stats">
-                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
+                            <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${@playlistService.getUserRatingForPlaylist(playlist.id, currentUser) != null and @playlistService.getUserRatingForPlaylist(playlist.id, currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
                                 👍 <span th:id="'likes-count-' + ${playlist.id}" th:text="${playlist.likesCount}">0</span>
                             </button>
-                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and !playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
+                            <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${@playlistService.getUserRatingForPlaylist(playlist.id, currentUser) != null and !@playlistService.getUserRatingForPlaylist(playlist.id, currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
                                 👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span>
                             </button>
                         </div>

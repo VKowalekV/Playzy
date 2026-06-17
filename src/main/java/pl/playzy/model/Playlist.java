@@ -40,21 +40,6 @@ public class Playlist {
     @Formula("(SELECT COUNT(f.user_id) FROM playlist_followers f WHERE f.playlist_id = id)")
     private int followersCount;
 
-    public Boolean getUserRating(User user) {
-        if (user == null || ratings == null)
-            return null;
-        return ratings.stream()
-                .filter(r -> r.getUser().getId().equals(user.getId()))
-                .map(PlaylistRating::isLike)
-                .findFirst()
-                .orElse(null);
-    }
-
-    public boolean isFollowedBy(User user) {
-        if (user == null || followers == null)
-            return false;
-        return followers.stream().anyMatch(u -> u.getId().equals(user.getId()));
-    }
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "playlist_followers", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))

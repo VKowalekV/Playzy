@@ -86,10 +86,10 @@
                 </div>
                 <div class="playlist-actions">
                     <div class="playlist-stats" sec:authorize="isAuthenticated()">
-                        <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
+                        <button th:id="'like-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${@playlistService.getUserRatingForPlaylist(playlist.id, currentUser) != null and @playlistService.getUserRatingForPlaylist(playlist.id, currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', true)'">
                             👍 <span th:id="'likes-count-' + ${playlist.id}" th:text="${playlist.likesCount}">0</span>
                         </button>
-                        <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${playlist.getUserRating(currentUser) != null and !playlist.getUserRating(currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
+                        <button th:id="'dislike-btn-' + ${playlist.id}" type="button" class="btn-icon" th:classappend="${@playlistService.getUserRatingForPlaylist(playlist.id, currentUser) != null and !@playlistService.getUserRatingForPlaylist(playlist.id, currentUser)} ? 'active' : ''" th:onclick="'ratePlaylist(event, ' + ${playlist.id} + ', false)'">
                             👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span>
                         </button>
                     </div>
@@ -98,7 +98,7 @@
                         <button class="btn-icon" onclick="window.location.href='/login'">👎 <span th:id="'dislikes-count-' + ${playlist.id}" th:text="${playlist.dislikesCount}">0</span></button>
                     </div>
                     <span th:if="${#authorization.expression('isAuthenticated()') and #authentication.name == playlist.owner.username}" class="playlist-badge playlist-badge-owned">Twoja playlista</span>
-                    <button th:id="'follow-btn-' + ${playlist.id}" type="button" th:if="${#authorization.expression('isAuthenticated()') and #authentication.name != playlist.owner.username}" class="btn-outline" th:classappend="${!playlist.isFollowedBy(currentUser)} ? 'active' : ''" th:text="${playlist.isFollowedBy(currentUser)} ? 'Odobserwuj' : 'Obserwuj'" th:onclick="'toggleFollow(event, ' + ${playlist.id} + ')'">Obserwuj</button>
+                    <button th:id="'follow-btn-' + ${playlist.id}" type="button" th:if="${#authorization.expression('isAuthenticated()') and #authentication.name != playlist.owner.username}" class="btn-outline" th:classappend="${!@playlistService.isPlaylistFollowedByUser(playlist.id, currentUser)} ? 'active' : ''" th:text="${@playlistService.isPlaylistFollowedByUser(playlist.id, currentUser)} ? 'Odobserwuj' : 'Obserwuj'" th:onclick="'toggleFollow(event, ' + ${playlist.id} + ')'">Obserwuj</button>
                     <button th:unless="${#authorization.expression('isAuthenticated()')}" class="btn-outline active" onclick="window.location.href='/login'">Obserwuj</button>
                 </div>
             </div>

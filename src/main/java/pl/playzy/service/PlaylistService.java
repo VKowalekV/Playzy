@@ -12,6 +12,7 @@ import pl.playzy.model.PlaylistRating;
 import pl.playzy.model.PlaylistTrack;
 import pl.playzy.model.Role;
 import pl.playzy.model.User;
+import pl.playzy.repository.PlaylistRatingRepository;
 import pl.playzy.repository.PlaylistRepository;
 import pl.playzy.repository.PlaylistTrackRepository;
 import pl.playzy.repository.UserRepository;
@@ -29,6 +30,7 @@ public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final PlaylistTrackRepository playlistTrackRepository;
     private final UserRepository userRepository;
+    private final PlaylistRatingRepository playlistRatingRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -86,6 +88,20 @@ public class PlaylistService {
 
         playlist.getCoCreators().add(newCoCreator);
         playlistRepository.save(playlist);
+    }
+
+    public boolean isPlaylistFollowedByUser(Long playlistId, User user) {
+        if (user == null)
+            return false;
+        return playlistRepository.existsByIdAndFollowersId(playlistId, user.getId());
+    }
+
+    public Boolean getUserRatingForPlaylist(Long playlistId, User user) {
+        if (user == null)
+            return null;
+        return playlistRatingRepository.findByPlaylistIdAndUserId(playlistId, user.getId())
+                .map(PlaylistRating::isLike)
+                .orElse(null);
     }
 
     public List<Playlist> getUserPlaylists(User user) {
@@ -168,42 +184,48 @@ public class PlaylistService {
 
     @Transactional
     public Playlist toggleFollow(Long id, User currentUser) {
-        return playlistRepository.findById(id).map(playlist -> {
-            if (playlist.isFollowedBy(currentUser)) {
-                playlist.getFollowers().removeIf(u -> u.getId().equals(currentUser.getId()));
-            } else {
-                playlist.getFollowers().add(currentUser);
-            }
-            return playlistRepository.save(playlist);
-        }).orElse(null);
+        Playlist playlist = playlistRepository.findById(id).orElse(null);
+        if (playlist == null)
+            return null;
+
+        if (isPlaylistFollowedByUser(id, currentUser)) {
+            playlistRepository.removeFollower(id, currentUser.getId());
+        } else {
+            playlistRepository.addFollower(id, currentUser.getId());
+        }
+
+        return playlist;
     }
 
     @Transactional
     public Playlist ratePlaylist(Long id, User currentUser, boolean isLike) {
-        return playlistRepository.findById(id).map(playlist -> {
-            Boolean currentRating = playlist.getUserRating(currentUser);
-            if (currentRating != null) {
-                if (currentRating == isLike) {
-                    playlist.getRatings().removeIf(r -> r.getUser().getId().equals(currentUser.getId()));
-                } else {
-                    playlist.getRatings().stream()
-                            .filter(r -> r.getUser().getId().equals(currentUser.getId()))
-                            .findFirst()
-                            .ifPresent(r -> r.setLike(isLike));
-                }
+        Playlist playlist = playlistRepository.findById(id).orElse(null);
+        if (playlist == null)
+            return null;
+
+        Optional<PlaylistRating> existingRating = playlistRatingRepository.findByPlaylistIdAndUserId(id,
+                currentUser.getId());
+
+        if (existingRating.isPresent()) {
+            PlaylistRating rating = existingRating.get();
+            if (rating.isLike() == isLike) {
+                playlistRatingRepository.delete(rating);
             } else {
-                PlaylistRating newRating = PlaylistRating.builder()
-                        .user(currentUser)
-                        .playlist(playlist)
-                        .isLike(isLike)
-                        .build();
-                playlist.getRatings().add(newRating);
+                rating.setLike(isLike);
+                playlistRatingRepository.save(rating);
             }
-            playlist = playlistRepository.save(playlist);
-            entityManager.flush();
-            entityManager.refresh(playlist);
-            return playlist;
-        }).orElse(null);
+        } else {
+            PlaylistRating newRating = PlaylistRating.builder()
+                    .user(currentUser)
+                    .playlist(playlist)
+                    .isLike(isLike)
+                    .build();
+            playlistRatingRepository.save(newRating);
+        }
+
+        entityManager.flush();
+        entityManager.refresh(playlist);
+        return playlist;
     }
 
     public Optional<Playlist> getPlaylistById(Long id) {
