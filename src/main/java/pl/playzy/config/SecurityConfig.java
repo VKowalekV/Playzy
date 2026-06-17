@@ -45,6 +45,9 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll())
+                .rememberMe(rememberMe -> rememberMe
+                        .key("playzySecretKey")
+                        .tokenValiditySeconds(86400 * 7))
                 .logout(logout -> logout
                         .logoutSuccessUrl("/")
                         .permitAll());
