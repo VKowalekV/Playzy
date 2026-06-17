@@ -59,7 +59,7 @@ public class AdminController {
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            addEditUserModalError(redirectAttributes, id, dto, bindingResult.getAllErrors().get(0).getDefaultMessage());
+            addEditUserModalError(redirectAttributes, id, dto, bindingResult.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/admin/users";
         }
 

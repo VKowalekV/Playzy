@@ -16,7 +16,7 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(auth -> auth

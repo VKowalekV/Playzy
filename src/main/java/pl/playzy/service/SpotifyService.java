@@ -44,7 +44,7 @@ public class SpotifyService {
                 ClientCredentialsRequest request = spotifyApi.clientCredentials().build();
                 ClientCredentials credentials = request.execute();
                 spotifyApi.setAccessToken(credentials.getAccessToken());
-                // Token ważny przez 1 godzinę, dajemy bufor 60 sekund
+                // Token ważny przez 1 godzinę oraz bufor 60 sekund, chyba nie ma wtedy błędu
                 tokenExpiry = LocalDateTime.now().plusSeconds(credentials.getExpiresIn() - 60);
             } catch (Exception e) {
                 e.printStackTrace();

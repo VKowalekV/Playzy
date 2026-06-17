@@ -253,10 +253,7 @@ public class PlaylistController {
     public String deleteTrack(@PathVariable Long id, @PathVariable Long trackId,
             @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
-            User user = userRepository.findByUsername(userDetails.getUsername().toLowerCase()).orElse(null);
-            if (user != null) {
-                playlistService.removeTrack(id, trackId, user);
-            }
+            userRepository.findByUsername(userDetails.getUsername().toLowerCase()).ifPresent(user -> playlistService.removeTrack(id, trackId, user));
         }
         return "redirect:/playlists/" + id;
     }

@@ -118,17 +118,12 @@ public class PlaylistService {
 
         LocalDateTime dateFrom = null;
         if (dateFilter != null) {
-            switch (dateFilter) {
-                case "day":
-                    dateFrom = LocalDateTime.now().minusDays(1);
-                    break;
-                case "week":
-                    dateFrom = LocalDateTime.now().minusWeeks(1);
-                    break;
-                case "month":
-                    dateFrom = LocalDateTime.now().minusMonths(1);
-                    break;
-            }
+            dateFrom = switch (dateFilter) {
+                case "day" -> LocalDateTime.now().minusDays(1);
+                case "week" -> LocalDateTime.now().minusWeeks(1);
+                case "month" -> LocalDateTime.now().minusMonths(1);
+                default -> null;
+            };
         }
 
         boolean hasDateFilter = dateFrom != null;

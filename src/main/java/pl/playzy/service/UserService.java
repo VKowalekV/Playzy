@@ -72,20 +72,20 @@ public class UserService {
     }
 
     @Transactional
-    public User updateEmail(User currentUser, String email) {
+    public void updateEmail(User currentUser, String email) {
         String emailLower = email.trim().toLowerCase();
         if (userRepository.existsByEmailIgnoreCaseAndIdNot(emailLower, currentUser.getId())) {
             throw new IllegalArgumentException("Adres e-mail jest już zajęty");
         }
 
         currentUser.setEmail(emailLower);
-        return userRepository.save(currentUser);
+        userRepository.save(currentUser);
     }
 
     @Transactional
-    public User updateDateOfBirth(User currentUser, LocalDate dateOfBirth) {
+    public void updateDateOfBirth(User currentUser, LocalDate dateOfBirth) {
         currentUser.setDateOfBirth(dateOfBirth);
-        return userRepository.save(currentUser);
+        userRepository.save(currentUser);
     }
 
     @Transactional
