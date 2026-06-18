@@ -35,7 +35,7 @@
             <a th:href="@{/register}"><button>Zacznij Tworzyć</button></a>
         </div>
         <div sec:authorize="isAuthenticated() and !hasRole('ADMIN')" class="hero-actions">
-            <a th:href="@{/dashboard}"><button>Przejdź do panelu</button></a>
+            <a th:href="@{/dashboard}"><button>Przejdź do Playlist</button></a>
         </div>
         <div sec:authorize="hasRole('ADMIN')" class="hero-actions">
             <a th:href="@{/admin/users}"><button>Przejdź do panelu admina</button></a>

@@ -40,7 +40,6 @@ public class Playlist {
     @Formula("(SELECT COUNT(f.user_id) FROM playlist_followers f WHERE f.playlist_id = id)")
     private int followersCount;
 
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "playlist_followers", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @Builder.Default
